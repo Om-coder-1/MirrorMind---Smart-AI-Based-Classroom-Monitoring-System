@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirrorMind - AI Face Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/other/attendance.css">
+</head>
+<body>
+    <form id="csrf-form" method="post">{% csrf_token %}</form>
+    <input type="hidden" id="subjectInput" value="{{ subject }}">
+    <input type="hidden" id="classInput" value="{{ class_name }}">
+    <input type="hidden" id="scheduleInput" value="{{ schedule }}">
+
+    <div class="animated-bg">
+        <div class="grid-layer"></div>
+        <div class="orbs-layer">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <header class="logo-header">
+        <div class="logo-container">
+            <h1 class="logo-text">MirrorMind</h1>
+        </div>
+        <p class="tagline">AI-Powered Smart Classroom Registration</p>
+    </header>
+
+    <div class="container">
+        <div class="left-panel">
+            <h2><i class="fas fa-camera"></i> Face Attendance</h2>
+            <div class="subtitle">Real-time face recognition for attendance marking</div>
+            <div class="instructions">
+                <h3><i class="fas fa-graduation-cap"></i> Attendance Instructions</h3>
+                <ul>
+                    <li>Ensure your face is clearly visible and centered in the frame</li>
+                    <li>Good natural lighting is recommended for better accuracy</li>
+                    <li>Remove any masks, caps, or accessories that may cover your face</li>
+                    <li>Look straight into the camera and maintain a neutral expression</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="camera-area">
+                <div class="camera-box" id="cameraBox">
+                    <video id="video" autoplay playsinline></video>
+                    <div class="camera-status" id="cameraStatus">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                        <span>Starting camera...</span>
+                    </div>
+                </div>
+
+                <canvas id="canvas"></canvas>
+
+                <button class="btn-primary" id="attendanceBtn">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Mark Attendance</span>
+                </button>
+
+                <div id="result" class="result-box">
+                    <div class="result-text">
+                        <i class="fas fa-clock"></i>
+                        <span>Waiting for action...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/other/attendance.js"></script>
+</body>
+</html>

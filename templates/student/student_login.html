@@ -1,0 +1,199 @@
+<!-- filename: student_login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login | MirrorMind</title>
+    <link rel="stylesheet" href="/static/css/student/student_login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    {% if error %}
+    <input type="hidden" id="djangoError" value="{{ error }}">
+    {% endif %}
+    {% if request.GET.success %}
+    <input type="hidden" id="successMessage" value="{{ request.GET.success }}">
+    {% endif %}
+</head>
+<body>
+    <div class="page-transition-overlay"></div>
+    <div class="animated-background">
+        <div class="particle-layer"></div>
+        <div class="grid-layer"></div>
+        <div class="orbs-layer">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="wave-layer"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <div class="logo-header">
+                <div class="logo-gradient">
+                    <div class="logo-container">
+                        <div class="logo-pulse"></div>
+                        <h1 class="logo-text">MirrorMind</h1>
+                    </div>
+                </div>
+                <p class="tagline">Empowering Students, Shaping Futures</p>
+            </div>
+            <div class="toast-container" id="toastContainer"></div>
+            <div class="loading-overlay hidden" id="loadingOverlay">
+                <div class="spinner"></div>
+                <p>Signing you in...</p>
+            </div>
+            <div class="login-card">
+                <div class="card-hover-glow"></div>
+                <div class="card-header">
+                    <div class="logo-icon">
+                        <img src="/static/images/123.png" alt="MirrorMind" class="card-logo-img">
+                    </div>
+                    <h2>Student Portal</h2>
+                    <p>Access your AI-powered learning dashboard</p>
+                </div>
+                <form id="studentLoginForm" class="login-form" method="POST" action="/student-login/">
+                    {% csrf_token %}
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <label for="email" class="form-label">Student Email *</label>
+                            <div class="input-field">
+                                <div class="input-icon-container">
+                                    <svg class="input-icon" viewBox="0 0 24 24">
+                                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                    </svg>
+                                </div>
+                                <input type="email" id="email" name="email" required placeholder="student@institute.edu" value="{{ request.POST.email|default:'' }}">
+                                <div class="floating-label-animation"></div>
+                            </div>
+                            <div class="input-effects">
+                                <div class="focus-border"></div>
+                                <div class="input-glow"></div>
+                            </div>
+                            <div class="validation-error" id="email_error"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <label for="password" class="form-label">Password *</label>
+                            <div class="input-field">
+                                <div class="input-icon-container">
+                                    <svg class="input-icon" viewBox="0 0 24 24">
+                                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                                    </svg>
+                                </div>
+                                <input type="password" id="password" name="password" required placeholder="Enter your password">
+                                <button type="button" class="toggle-password" data-target="password">
+                                    <svg class="eye-icon" viewBox="0 0 24 24">
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                                    </svg>
+                                </button>
+                                <div class="floating-label-animation"></div>
+                            </div>
+                            <div class="input-effects">
+                                <div class="focus-border"></div>
+                                <div class="input-glow"></div>
+                            </div>
+                            <div class="validation-error" id="password_error"></div>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rememberMe" name="remember">
+                            <label for="rememberMe" class="terms-label">Remember this device</label>
+                            <div class="checkbox-animation"></div>
+                        </div>
+                        <a href="/student-reset-password/" class="forgot-password">
+                            <svg class="forgot-icon" viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                            </svg>
+                            Forgot Password?
+                        </a>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn-primary" id="loginBtn">
+                            <span class="btn-text">Sign In as Student</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                            </svg>
+                            <span class="btn-loader">
+                                <div class="spinner"></div>
+                            </span>
+                            <div class="btn-ripple-container"></div>
+                        </button>
+                    </div>
+                    <div class="card-footer">
+                        <div class="footer-links">
+                            <a href="/student-signup/" class="signup-link">
+                                <svg class="link-icon" viewBox="0 0 24 24">
+                                    <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                                </svg>
+                                Create Student Account
+                            </a>
+                            <a href="/" class="back-home">
+                                <svg class="link-icon" viewBox="0 0 24 24">
+                                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                                </svg>
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="errorModal">
+        <div class="redirect-modal error-modal">
+            <div class="modal-icon-container error">
+                <svg class="modal-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+                <div class="modal-icon-glow"></div>
+            </div>
+            <h3>Access Denied</h3>
+            <p id="errorMessage">Invalid student credentials. Please try again.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="tryAgainBtn">
+                    <span class="btn-text">Try Again</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                    </svg>
+                    <div class="btn-ripple-container"></div>
+                </button>
+            </div>
+            <button class="modal-close" id="closeError">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="successModal">
+        <div class="redirect-modal">
+            <div class="modal-icon-container success">
+                <svg class="modal-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+                <div class="modal-icon-glow"></div>
+            </div>
+            <h3>Login Successful!</h3>
+            <p>Welcome back to MirrorMind</p>
+            <div class="redirect-progress">
+                <div class="progress-bar"></div>
+            </div>
+            <p class="redirect-text">Redirecting to dashboard...</p>
+        </div>
+    </div>
+    <script src="/static/js/student/student_login.js"></script>
+</body>
+</html>

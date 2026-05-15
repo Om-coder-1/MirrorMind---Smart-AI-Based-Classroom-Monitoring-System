@@ -1,0 +1,348 @@
+/* ---------- RESET & GLOBAL ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background-color: #0b1120; /* deep navy/charcoal */
+  color: #e2e8f0;
+  line-height: 1.7;
+}
+
+/* main flex layout: left content (70%) + right nav (30%) */
+.page-layout {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 2rem 2rem 2rem;
+  gap: 2rem;
+}
+
+/* LEFT MAIN CONTENT (70%) */
+.main-content {
+  flex: 0 0 70%;
+  max-width: 70%;
+}
+
+.content-inner {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: 2rem;
+}
+
+/* RIGHT STICKY NAV (30%) */
+.nav-panel {
+  flex: 0 0 30%;
+  max-width: 30%;
+  position: sticky;
+  top: 2rem;
+  align-self: flex-start;
+  height: calc(100vh - 4rem);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0f1a2b;
+}
+
+.nav-panel::-webkit-scrollbar {
+  width: 5px;
+}
+.nav-panel::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  border-radius: 10px;
+}
+
+.nav-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-left: 2px solid #1e2f45;
+  padding-left: 0.5rem;
+}
+
+.nav-link {
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.6rem 1rem 0.6rem 1.2rem;
+  border-radius: 6px 0 0 6px;
+  color: #9aaec9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: #1c2a40;
+  color: #f1f5f9;
+  border-left-color: #5f7ea0;
+}
+
+.nav-link.active-tab {
+  background-color: #1e314a;
+  color: white;
+  border-left: 3px solid #8fabd0;
+  font-weight: 600;
+}
+
+/* subtle active indicator animation (width change) */
+.nav-link.active-tab::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: #aac2e6;
+  animation: slideActive 0.25s ease-out;
+}
+
+@keyframes slideActive {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ---------- PRIVACY HEADER (inside left) ---------- */
+.privacy-header {
+  margin-bottom: 3rem;
+}
+
+.privacy-header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f8fafc;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.hero-meta {
+  color: #94a3b8;
+  font-size: 1rem;
+  border-bottom: 1px solid #1e2f45;
+  padding-bottom: 1.5rem;
+}
+
+.hero-meta strong {
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+/* ---------- SECTION STYLES + FADE ANIMATIONS ---------- */
+.policy-section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 2rem;
+}
+
+.section-card {
+  opacity: 0;
+  transform: translateY(25px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.9, 0.1, 1),
+    transform 0.7s cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+
+.section-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* staggered subsections */
+.subsection {
+  margin: 2rem 0 2rem 0.5rem;
+  opacity: 0;
+  transform: translateY(15px);
+  transition:
+    opacity 0.5s ease 0.12s,
+    transform 0.5s ease 0.12s;
+}
+
+.section-card.visible .subsection {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 1.2rem 0;
+  letter-spacing: -0.01em;
+  border-left: 5px solid #3d5a7c;
+  padding-left: 1.3rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e2edf5;
+  margin-bottom: 0.8rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #d1deee;
+  margin: 0.5rem 0 0.5rem;
+}
+
+p {
+  margin-bottom: 1.2rem;
+  color: #cbd5e1;
+}
+
+ul,
+ol {
+  margin: 0.5rem 0 1.5rem 1.8rem;
+}
+
+li {
+  margin-bottom: 0.4rem;
+  color: #cbd5e1;
+}
+
+.legal-block {
+  background-color: #162434;
+  border-left: 4px solid #456788;
+  padding: 1.3rem 1.8rem;
+  border-radius: 0 12px 12px 0;
+  margin: 1.8rem 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #253f58;
+  margin: 2.5rem 0;
+}
+
+a {
+  color: #b1c6f2;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #dfebff;
+}
+
+.small-meta {
+  font-size: 0.9rem;
+  color: #92a6c2;
+}
+
+/* ---------- FOOTER (full width, below layout) ---------- */
+.footer {
+  background-color: #0a101d;
+  border-top: 1px solid #1e2b3e;
+  padding: 2rem 2rem 1.5rem;
+  margin-top: 2rem;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  padding: 0 2rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-links a {
+  color: #a0afc0;
+}
+
+.copyright {
+  width: 100%;
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #607797;
+  font-size: 0.85rem;
+}
+
+/* ---------- RESPONSIVE (mobile: nav above content) ---------- */
+@media (max-width: 900px) {
+  .page-layout {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .main-content,
+  .nav-panel {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .content-inner {
+    margin-right: 0;
+    max-width: 100%;
+  }
+  .nav-panel {
+    position: relative;
+    top: 0;
+    height: auto;
+    overflow-y: visible;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #1e2f45;
+    padding-bottom: 0.8rem;
+  }
+  .nav-stack {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    border-left: none;
+    padding-left: 0;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+  .nav-link {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.6rem 1rem;
+    white-space: nowrap;
+    border-radius: 0;
+  }
+  .nav-link.active-tab {
+    border-left: none;
+    border-bottom: 3px solid #8fabd0;
+    background-color: #1a2a40;
+  }
+  .nav-link.active-tab::before {
+    display: none;
+  }
+  .nav-link:hover {
+    border-left: none;
+    border-bottom-color: #5f7ea0;
+  }
+}
+
+/* extra small */
+@media (max-width: 500px) {
+  .privacy-header h1 {
+    font-size: 2.2rem;
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MirrorMind · AI classroom intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div id="particles"></div>
+    <div class="logo-container">
+      <img src="/static/images/123.png" alt="MirrorMind Logo" class="logo" id="logo-animation">
+    </div>
+    <div class="hero-text">
+      <h1 class="hero-title" id="typewriter-title"></h1>
+    </div>
+    <p class="hero-subtitle" id="typewriter-subtitle"></p>
+  </header>
+  
+  <div class="main">
+    <div class="new-white-section">
+      <div class="cards-row">
+        <div class="card student-card" id="studentCard">
+          <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
+          <h3>Student</h3>
+          <ul class="feature-list" id="studentFeatures">
+            <li><i class="fas fa-chart-line"></i> Personal focus tracker</li>
+            <li><i class="fas fa-smile"></i> Emotion insights</li>
+            <li><i class="fas fa-clock"></i> Study time analytics</li>
+          </ul>
+          <a href="/student-login/" class="btn-outline">🎯 My dashboard</a>
+        </div>
+        <div class="card teacher-card" id="teacherCard">
+          <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <h3>Teacher</h3>
+          <ul class="feature-list" id="teacherFeatures">
+            <li><i class="fas fa-users"></i> Classroom heatmaps</li>
+            <li><i class="fas fa-bell"></i> Engagement alerts</li>
+            <li><i class="fas fa-file-alt"></i> Automated reports</li>
+          </ul>
+          <a href="/teacher-login/" class="btn-outline">📊 Class dashboard</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">Classroom Features</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-camera"></i></div>
+          <h4>Face attendance</h4>
+          <p>99.7% accuracy · instant register · no extra hardware</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-face-smile"></i></div>
+          <h4>Emotion analysis</h4>
+          <p>detect engagement, confusion, boredom in real time</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-temperature-high"></i></div>
+          <h4>Heatmaps</h4>
+          <p>attention distribution · per student focus timeline</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bell"></i></div>
+          <h4>Smart alerts</h4>
+          <p>get notified when attention drops or a student needs help</p>
+        </div>
+      </div>
+
+      <section class="emotion-quote">
+        <div class="quote-text">
+          “Not just attendance — we read the room, one micro‑expression at a time.”
+          <small>Because understanding how they feel is the first step to helping them grow.</small>
+        </div>
+      </section>
+
+      <section class="cta-final">
+        <h2>See MirrorMind in action</h2>
+        <div class="dual-cta">
+          <a href="/student-login/" class="glow-btn stu">🎓 I'm a student</a>
+          <a href="/teacher-login/" class="glow-btn teach">🧑‍🦱 I'm a teacher</a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <img src="/static/images/123.png" alt="MirrorMind" class="footer-logo-img">
+        <span>MirrorMind</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="linkedin"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" aria-label="youtube"><i class="fab fa-youtube"></i></a>
+      </div>
+      <div class="footer-links">
+        <a href="/about/">About</a>
+        <a href="/term-condition/">Terms</a>
+        <a href="/privacy-policy/">Privacy Policy</a>
+        <a href="#">Help & Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <div class="copyright">© 2026 MirrorMind. All rights reserved.</div>
+      <div class="legal">
+        <a href="/privacy-policy/">Privacy Policy</a>
+        <a href="/term-condition/">Terms of Service</a>
+      </div>
+    </div>
+
+    <div class="footer-made">
+      Made with <i class="fas fa-heart"></i> by MirrorMind Team<br> <span style="font-size: 0.85rem; opacity:0.8;">Powered by MirrorMind team</span>
+    </div>
+  </footer>
+
+  <script src="/static/js/script.js"></script>
+</body>
+</html>

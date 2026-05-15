@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MirrorMind · Terms and Conditions</title>
+  <!-- Inter – clean, modern, enterprise -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for icons (optional, for footer) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ---------- RESET & GLOBAL (identical to privacy page) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background-color: #0b1120;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* main flex layout: left content (70%) + right nav (30%) */
+    .page-layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 2rem 2rem 2rem;
+      gap: 2rem;
+    }
+
+    .main-content {
+      flex: 0 0 70%;
+      max-width: 70%;
+    }
+
+    .content-inner {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: 2rem;
+    }
+
+    .nav-panel {
+      flex: 0 0 30%;
+      max-width: 30%;
+      position: sticky;
+      top: 2rem;
+      align-self: flex-start;
+      height: calc(100vh - 4rem);
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: #334155 #0f1a2b;
+    }
+
+    .nav-panel::-webkit-scrollbar {
+      width: 5px;
+    }
+    .nav-panel::-webkit-scrollbar-thumb {
+      background-color: #334155;
+      border-radius: 10px;
+    }
+
+    .nav-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      border-left: 2px solid #1e2f45;
+      padding-left: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.6rem 1rem 0.6rem 1.2rem;
+      border-radius: 6px 0 0 6px;
+      color: #9aaec9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: "Inter", sans-serif;
+      position: relative;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link:hover {
+      background-color: #1c2a40;
+      color: #f1f5f9;
+      border-left-color: #5f7ea0;
+    }
+
+    .nav-link.active-tab {
+      background-color: #1e314a;
+      color: white;
+      border-left: 3px solid #8fabd0;
+      font-weight: 600;
+    }
+
+    .nav-link.active-tab::before {
+      content: "";
+      position: absolute;
+      left: -2px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background-color: #aac2e6;
+      animation: slideActive 0.25s ease-out;
+    }
+
+    @keyframes slideActive {
+      0% { opacity: 0; transform: scaleY(0.3); }
+      100% { opacity: 1; transform: scaleY(1); }
+    }
+
+    .terms-header {
+      margin-bottom: 3rem;
+    }
+
+    .terms-header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-meta {
+      color: #94a3b8;
+      font-size: 1rem;
+      border-bottom: 1px solid #1e2f45;
+      padding-bottom: 1.5rem;
+    }
+
+    .hero-meta strong {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .policy-section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 2rem;
+    }
+
+    .section-card {
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.1, 1), transform 0.7s cubic-bezier(0.2, 0.9, 0.1, 1);
+    }
+
+    .section-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .subsection {
+      margin: 2rem 0 2rem 0.5rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.5s ease 0.12s, transform 0.5s ease 0.12s;
+    }
+
+    .section-card.visible .subsection {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin: 0 0 1.2rem 0;
+      letter-spacing: -0.01em;
+      border-left: 5px solid #3d5a7c;
+      padding-left: 1.3rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #e2edf5;
+      margin-bottom: 0.8rem;
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      color: #cbd5e1;
+    }
+
+    ul, ol {
+      margin: 0.5rem 0 1.5rem 1.8rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+      color: #cbd5e1;
+    }
+
+    .legal-block {
+      background-color: #162434;
+      border-left: 4px solid #456788;
+      padding: 1.3rem 1.8rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1.8rem 0;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #253f58;
+      margin: 2.5rem 0;
+    }
+
+    a {
+      color: #b1c6f2;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #dfebff;
+    }
+
+    .small-meta {
+      font-size: 0.9rem;
+      color: #92a6c2;
+    }
+
+    /* Footer (improved with logo) */
+    .footer {
+      background-color: #0a101d;
+      border-top: 1px solid #1e2b3e;
+      padding: 3rem 2rem 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+      gap: 2.5rem;
+      align-items: start;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      padding: 0 1rem;
+    }
+
+    .footer-logo-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-icon {
+      background: linear-gradient(145deg, #2d4b6e, #1a2f4a);
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #aac8f0;
+      box-shadow: 0 4px 10px rgba(0, 20, 40, 0.6);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+      color: #f0f4fa;
+    }
+
+    .logo-tagline {
+      font-size: 0.85rem;
+      color: #7e98b5;
+      max-width: 220px;
+      line-height: 1.5;
+    }
+
+    .footer-col h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #d1e0f0;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .footer-col li {
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-col a {
+      color: #9bb1cc;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover {
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 0.8rem;
+    }
+
+    .social-icons a {
+      font-size: 1.2rem;
+      color: #8ea5c2;
+    }
+
+    .social-icons a:hover {
+      color: #cbdffc;
+    }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #1f3147;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: #607797;
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-bottom-links a {
+      color: #8098b5;
+      font-size: 0.9rem;
+    }
+
+    .footer-bottom-links a:hover {
+      color: #e0ecff;
+    }
+
+    .copyright-badge {
+      background-color: #16273c;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #a0bbda;
+      border: 1px solid #2a405b;
+    }
+
+    @media (max-width: 1000px) {
+      .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .footer-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .page-layout {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .main-content, .nav-panel {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+      .content-inner {
+        margin-right: 0;
+        max-width: 100%;
+      }
+      .nav-panel {
+        position: relative;
+        top: 0;
+        height: auto;
+        overflow-y: visible;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #1e2f45;
+        padding-bottom: 0.8rem;
+      }
+      .nav-stack {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        border-left: none;
+        padding-left: 0;
+        gap: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      .nav-link {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 0.6rem 1rem;
+        white-space: nowrap;
+        border-radius: 0;
+      }
+      .nav-link.active-tab {
+        border-left: none;
+        border-bottom: 3px solid #8fabd0;
+        background-color: #1a2a40;
+      }
+      .nav-link.active-tab::before {
+        display: none;
+      }
+      .nav-link:hover {
+        border-left: none;
+        border-bottom-color: #5f7ea0;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .terms-header h1 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- LAYOUT: left content (70%) + right sticky nav (30%) -->
+  <div class="page-layout">
+    <!-- LEFT MAIN CONTENT (sections) -->
+    <div class="main-content">
+      <div class="content-inner">
+        <!-- header -->
+        <div class="terms-header">
+          <h1>Terms and Conditions</h1>
+          <div class="hero-meta">
+            <strong>Effective Date:</strong> March 1, 2025 &nbsp; | &nbsp;
+            <strong>Last Updated:</strong> February 20, 2025
+          </div>
+        </div>
+
+        <!-- === TERMS SECTIONS (fully customized for MirrorMind) === -->
+        <section id="acceptance" class="policy-section section-card">
+          <h2>1. Acceptance of Terms</h2>
+          <p>By accessing or using MirrorMind (“the Platform”), you agree to be bound by these Terms and Conditions. The Platform is provided to educational institutions, teachers, and students solely for academic purposes: AI‑assisted attendance, emotion analytics, and classroom engagement monitoring. If you do not agree, you may not use the Platform.</p>
+          <p>MirrorMind is an academic project and not a commercial surveillance tool. Your use of the Platform is conditional upon compliance with all applicable laws and institutional policies.</p>
+        </section>
+
+        <section id="definitions" class="policy-section section-card">
+          <h2>2. Definitions</h2>
+          <ul>
+            <li><strong>“Platform”</strong> – MirrorMind, including its web interface, backend services, face recognition and emotion detection features, analytics dashboards, and email OTP authentication.</li>
+            <li><strong>“Educational Institution”</strong> – the school, college, or university that has deployed MirrorMind for classroom use.</li>
+            <li><strong>“User”</strong> – any individual using the Platform, including students, teachers, and administrative staff.</li>
+            <li><strong>“Biometric Data”</strong> – facial recognition embeddings and derived emotional indicators as described in the Privacy Policy.</li>
+            <li><strong>“Content”</strong> – any information, materials, or data uploaded or generated through the Platform.</li>
+          </ul>
+        </section>
+
+        <section id="eligibility" class="policy-section section-card">
+          <h2>3. Eligibility and Registration</h2>
+          <p>Use of MirrorMind is restricted to currently enrolled students, employed teachers, and authorized staff of an educational institution that has an active agreement with the MirrorMind project. Users must provide accurate registration information (name, institutional email) and complete email OTP verification. Accounts are non‑transferable.</p>
+          <p>If you are under the age of 13 (or the age of consent in your jurisdiction), your parent or guardian must provide consent before you use any biometric features. Institutions are responsible for obtaining such consent.</p>
+        </section>
+
+        <section id="acceptable-use" class="policy-section section-card">
+          <h2>4. Acceptable Use</h2>
+          <p>You agree to use MirrorMind only for its intended educational purposes:</p>
+          <ul>
+            <li>Students: to verify attendance, participate in live classes, and view personal engagement reports (if enabled by the institution).</li>
+            <li>Teachers: to monitor aggregated classroom engagement, take attendance, and access de‑identified analytics.</li>
+            <li>Administrators: to manage class rosters, consent records, and system configuration.</li>
+          </ul>
+          <p><strong>Prohibited activities include:</strong> attempting to reverse‑engineer the AI models, using the Platform for surveillance outside class hours, sharing login credentials, scraping data, or using the system for any unlawful purpose. MirrorMind’s face recognition must never be used to harass, discriminate, or profile individuals.</p>
+          <div class="legal-block">
+            <p><strong>No unlawful surveillance:</strong> Any use of MirrorMind for continuous monitoring outside scheduled class sessions is strictly forbidden and may result in immediate termination of access.</p>
+          </div>
+        </section>
+
+        <section id="biometric-consent" class="policy-section section-card">
+          <h2>5. Biometric Consent and Processing</h2>
+          <p>MirrorMind’s core features rely on facial recognition and emotion detection. By using the Platform, you acknowledge that:</p>
+          <ul>
+            <li>Face embeddings will be generated before class attendance and stored in encrypted form.</li>
+            <li>Emotion indicators will be processed during live sessions and presented only as aggregated classroom analytics.</li>
+            <li>Raw video is ephemeral (processed in memory) and not permanently retained.</li>
+            <li>You have the right to withdraw consent at any time, after which biometric data will be deleted within 30 days, but attendance functionality may be limited.</li>
+          </ul>
+          <p>Institutions must ensure that appropriate consent (parental/guardian for minors) is obtained before students use biometric features.</p>
+        </section>
+
+        <section id="intellectual-property" class="policy-section section-card">
+          <h2>6. Intellectual Property Rights</h2>
+          <p>MirrorMind (including its software, AI models, design, and content) is owned by the MirrorMind project team and its contributors. Users are granted a limited, non‑exclusive, non‑transferable license to use the Platform during the term of their institution’s participation. No ownership rights are transferred.</p>
+          <p>Feedback or suggestions provided by users may be used to improve the Platform without compensation.</p>
+        </section>
+
+        <section id="privacy-data" class="policy-section section-card">
+          <h2>7. Privacy and Data Protection</h2>
+          <p>Your use of MirrorMind is governed by our <a href="#">Privacy Policy</a>, which explains in detail how personal and biometric data are collected, used, and protected. Key principles:</p>
+          <ul>
+            <li>Data is never sold or used for advertising.</li>
+            <li>Biometric data is encrypted and stored separately from identifiers.</li>
+            <li>Aggregated analytics are de‑identified.</li>
+            <li>You may request access, correction, or deletion of your data.</li>
+          </ul>
+          <p>By using MirrorMind, you confirm that you have read and understood the Privacy Policy.</p>
+        </section>
+
+        <section id="security" class="policy-section section-card">
+          <h2>8. Security and Account Responsibilities</h2>
+          <p>You are responsible for maintaining the confidentiality of your account credentials. Notify your institution immediately if you suspect unauthorised use. MirrorMind uses email OTP to secure login; do not share OTP codes. The platform employs encryption (TLS, AES‑256) to protect data, but no system is completely immune to breaches. You agree to use the Platform at your own risk within an academic environment.</p>
+        </section>
+
+        <section id="thirdparty" class="policy-section section-card">
+          <h2>9. Third‑Party Services</h2>
+          <p>MirrorMind integrates with Gmail SMTP for OTP emails and may use cloud infrastructure providers. These third parties act as data processors bound by confidentiality agreements. The Platform may contain links to educational resources; we are not responsible for external content.</p>
+        </section>
+
+        <section id="termination" class="policy-section section-card">
+          <h2>10. Termination and Suspension</h2>
+          <p>Access to MirrorMind may be terminated or suspended:</p>
+          <ul>
+            <li>At the request of your educational institution (e.g., upon graduation or withdrawal).</li>
+            <li>If you violate these Terms (e.g., misuse of biometric data).</li>
+            <li>By the MirrorMind project team if the academic pilot concludes.</li>
+          </ul>
+          <p>Upon termination, your biometric data will be deleted in accordance with the retention policy (usually within 30 days). Aggregated, anonymised data may be retained for research.</p>
+        </section>
+
+        <section id="disclaimers" class="policy-section section-card">
+          <h2>11. Disclaimers and Limitations</h2>
+          <p><strong>MirrorMind is provided “as is” for academic purposes.</strong> While we strive for accuracy, face recognition and emotion detection may not be 100% error‑free. The Platform is not a substitute for professional educational assessment. To the maximum extent permitted by law, MirrorMind disclaims all warranties, including fitness for a particular purpose and non‑infringement. In no event shall the MirrorMind project team be liable for indirect, incidental, or consequential damages arising from your use.</p>
+          <p>Some jurisdictions may not allow certain disclaimers; they apply only to the extent permitted by law.</p>
+        </section>
+
+        <section id="indemnification" class="policy-section section-card">
+          <h2>12. Indemnification</h2>
+          <p>You agree to indemnify and hold harmless the MirrorMind project team, contributors, and partnering institutions from any claims arising out of your misuse of the Platform, violation of these Terms, or infringement of any rights of a third party.</p>
+        </section>
+
+        <section id="modifications" class="policy-section section-card">
+          <h2>13. Modifications to Terms</h2>
+          <p>We may revise these Terms occasionally to reflect legal, technical, or academic developments. Material changes will be communicated via email (to institutional administrators) or a notice on the Platform. Your continued use after the effective date constitutes acceptance of the updated Terms.</p>
+        </section>
+
+        <section id="governing-law" class="policy-section section-card">
+          <h2>14. Governing Law</h2>
+          <p>These Terms shall be governed by the laws of the jurisdiction where the educational institution is located, without regard to conflict of law principles. For institutions based in India, the laws of India apply; for EU institutions, local data protection laws prevail.</p>
+        </section>
+
+        <section id="contact" class="policy-section section-card">
+          <h2>15. Contact Information</h2>
+          <p>For questions about these Terms, or to report a violation, please contact:</p>
+          <p>
+            MirrorMind Project Team<br />
+            Attn: Terms Administrator<br />
+            Department of Computer Science & Engineering<br />
+            Email: <a href="mailto:legal@mirrormind.edu">legal@mirrormind.edu</a><br />
+            Phone: +[91] (79) 1234‑5678
+          </p>
+          <p>Institutional partners may also contact their MirrorMind representative.</p>
+        </section>
+
+        <hr />
+        <p class="small-meta">MirrorMind Terms and Conditions – version 1.0 (academic use). These terms complement the Privacy Policy and together govern your use of the AI classroom platform.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT STICKY NAVIGATION PANEL (30%) -->
+    <aside class="nav-panel">
+      <div class="nav-stack" id="navStack">
+        <button class="nav-link active-tab" data-target="acceptance">1. Acceptance</button>
+        <button class="nav-link" data-target="definitions">2. Definitions</button>
+        <button class="nav-link" data-target="eligibility">3. Eligibility</button>
+        <button class="nav-link" data-target="acceptable-use">4. Acceptable use</button>
+        <button class="nav-link" data-target="biometric-consent">5. Biometric consent</button>
+        <button class="nav-link" data-target="intellectual-property">6. IP rights</button>
+        <button class="nav-link" data-target="privacy-data">7. Privacy & data</button>
+        <button class="nav-link" data-target="security">8. Security</button>
+        <button class="nav-link" data-target="thirdparty">9. Third parties</button>
+        <button class="nav-link" data-target="termination">10. Termination</button>
+        <button class="nav-link" data-target="disclaimers">11. Disclaimers</button>
+        <button class="nav-link" data-target="indemnification">12. Indemnification</button>
+        <button class="nav-link" data-target="modifications">13. Modifications</button>
+        <button class="nav-link" data-target="governing-law">14. Governing law</button>
+        <button class="nav-link" data-target="contact">15. Contact</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FOOTER (identical to privacy page) -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo-col">
+        <div class="footer-logo">
+          <span class="logo-icon"><i class="static/images/123.png"></i></span>
+          <span class="logo-text">MirrorMind</span>
+        </div>
+        <div class="logo-tagline">
+          AI-powered smart classroom · engagement analytics · privacy first
+        </div>
+        <div class="social-icons">
+          <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">Classroom dashboard</a></li>
+          <li><a href="#">Face recognition</a></li>
+          <li><a href="#">Emotion analytics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API status</a></li>
+          <li><a href="#">Research paper</a></li>
+          <li><a href="#">Institutional login</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal & contact</h4>
+        <ul>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Terms of use</a></li>
+          <li><a href="#">Data deletion</a></li>
+          <li><a href="mailto:legal@mirrormind.edu">legal@mirrormind.edu</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2025 MirrorMind — Academic Smart Classroom Project</div>
+        <div class="footer-bottom-links">
+          <a href="#">Accessibility</a>
+          <a href="#">Security</a>
+          <a href="#">Contact</a>
+        </div>
+        <span class="copyright-badge">educational use only</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const sections = document.querySelectorAll(".policy-section");
+      const navLinks = document.querySelectorAll(".nav-link");
+      const navStack = document.getElementById("navStack");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add("visible");
+          });
+
+          let bestSection = null;
+          let maxVisibleHeight = 0;
+          sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            const visibleTop = Math.max(rect.top, 0);
+            const visibleBottom = Math.min(rect.bottom, window.innerHeight);
+            const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+            if (visibleHeight > maxVisibleHeight) {
+              maxVisibleHeight = visibleHeight;
+              bestSection = section;
+            }
+          });
+
+          if (bestSection) {
+            const id = bestSection.getAttribute("id");
+            navLinks.forEach((link) => {
+              link.classList.remove("active-tab");
+              if (link.dataset.target === id) {
+                link.classList.add("active-tab");
+                if (navStack && window.innerWidth > 900) {
+                  const container = navStack.parentElement;
+                  const linkRect = link.getBoundingClientRect();
+                  const containerRect = container.getBoundingClientRect();
+                  if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
+                    link.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                  }
+                }
+              }
+            });
+          } else {
+            if (window.scrollY < 300) {
+              navLinks.forEach((l) => l.classList.remove("active-tab"));
+              document.querySelector('.nav-link[data-target="acceptance"]').classList.add("active-tab");
+            }
+          }
+        },
+        { threshold: 0.2, rootMargin: "0px 0px -10px 0px" }
+      );
+
+      sections.forEach((s) => observer.observe(s));
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.dataset.target;
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      window.addEventListener("load", () => {
+        sections.forEach((s) => {
+          if (s.getBoundingClientRect().top < window.innerHeight) s.classList.add("visible");
+        });
+      });
+    })();
+  </script>
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/f8e5a4b9b9.js" crossorigin="anonymous"></script>
+</body>
+</html>

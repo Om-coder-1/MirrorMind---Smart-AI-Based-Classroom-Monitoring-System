@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MirrorMind – Face Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="/static/css/other/face_capture.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-header">
+            <!-- Enhanced Logo Animation Container -->
+            <div class="logo-gradient">
+                <div class="logo-container">
+                    <!-- <div class="logo-orbital-ring"></div> -->
+                    <!-- <div class="logo-pulse"></div> -->
+                    <h1 class="logo-text">MirrorMind</h1>
+                </div>
+            </div>
+    <p class="subtitle">Face Registration System</p>
+
+    <div class="video-box">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="overlay"></canvas>
+    </div>
+
+    <div class="counter-container">
+        <span class="counter-label">Captures Progress</span>
+        <!-- 🔹 UPDATED: Default counter shows 0 / 30 (previously 0 / 100) -->
+        <div id="counter">0 / 30</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <button id="startBtn" onclick="startCapture()">
+        <i class="fas fa-camera button-icon"></i>
+        Start Face Capture
+    </button>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+const STUDENT_ID = "{{ student_id }}";
+</script>
+
+<!-- External JavaScript -->
+<script src="/static/js/other/face_capture.js"></script>
+
+</body>
+</html>

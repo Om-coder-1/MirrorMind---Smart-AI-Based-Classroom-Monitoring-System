@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MirrorMind · Live Classroom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        const SCHEDULE_ID = "{{ schedule_id }}";
+        const ROLE = "{{ role }}";
+        const USER_ID = "{{ user_id }}";
+        const USER_NAME = "{{ user_name }}";
+        const SUBJECT = "{{ subject_name }}";
+        const CLASS_NAME = "{{ class_name }}";
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #07070c;
+            --surface-dark: rgba(20, 22, 32, 0.85);
+            --glass-border: 1px solid rgba(108, 92, 231, 0.2);
+            --blur-md: blur(12px);
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.4);
+            --text-primary: #f0f0fc;
+            --text-secondary: #a0a0bc;
+            --danger: #ff5e5e;
+            --success: #2ecc71;
+            --card-radius: 22px;
+            --transition-smooth: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body.light-mode {
+            --bg-dark: #f5f7ff;
+            --surface-dark: rgba(255, 255, 255, 0.75);
+            --glass-border: 1px solid rgba(108, 92, 231, 0.25);
+            --text-primary: #1e1e2f;
+            --text-secondary: #4a4a6a;
+            background: #eef2ff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.2s ease;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .meeting-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 10px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            background: rgba(10, 10, 18, 0.55);
+            backdrop-filter: blur(16px);
+            border-radius: 60px;
+            padding: 8px 20px;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            min-height: 58px;
+        }
+
+        body.light-mode .top-bar {
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .left-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .top-bar-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 14px rgba(108, 92, 231, 0.4);
+            flex-shrink: 0;
+        }
+
+        .brand-logo svg {
+            width: 42px;
+            height: 42px;
+            display: block;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c5ce7, #a463f5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+
+        .live-badge {
+            background: rgba(255, 70, 70, 0.15);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 70, 70, 0.4);
+            backdrop-filter: blur(4px);
+            flex-shrink: 0;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            animation: pulseRed 1.4s infinite;
+            box-shadow: 0 0 5px #ff4d4d;
+        }
+
+        @keyframes pulseRed {
+            0% {
+                opacity: 0.5;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .theme-toggle {
+            background: rgba(108, 92, 231, 0.2);
+            border: 1px solid rgba(108, 92, 231, 0.4);
+            border-radius: 50px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+            background: rgba(108, 92, 231, 0.35);
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        #subjectLabel {
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: rgba(108, 92, 231, 0.2);
+            padding: 4px 12px;
+            border-radius: 30px;
+            white-space: nowrap;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .main-area {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            width: 100%;
+        }
+
+        #teacherLayout {
+            display: none;
+            flex-direction: row;
+            gap: 18px;
+            flex: 1;
+            width: 100%;
+        }
+
+        #teacherLayout.active {
+            display: flex;
+        }
+
+        .teacher-stream-wrap {
+            flex: 1.8;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            background: #00000030;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(108, 92, 231, 0.2);
+            transition: box-shadow 0.3s;
+        }
+
+        .teacher-right-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+            padding-right: 4px;
+        }
+
+        .info-card,
+        .count-card,
+        .emotion-panel,
+        .chat-panel {
+            background: var(--surface-dark);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(108, 92, 231, 0.25);
+            transition: var(--transition-smooth);
+        }
+
+        .info-card {
+            padding: 12px 16px;
+        }
+
+        .info-card-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .count-card {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: linear-gradient(115deg, rgba(108, 92, 231, 0.12), rgba(108, 92, 231, 0.02));
+        }
+
+        .count-number {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #a29bfe;
+            line-height: 1;
+        }
+
+        .emotion-panel {
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .emotion-panel-header {
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .emotion-list-inner {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .esc {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(108, 92, 231, 0.05);
+            padding: 8px 12px;
+            border-radius: 18px;
+            transition: 0.2s;
+        }
+
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 650px;
+        }
+
+        .chat-header {
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-msg {
+            animation: fadeSlide 0.2s ease;
+        }
+
+        .chat-msg-text {
+            background: rgba(108, 92, 231, 0.15);
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 0.75rem;
+            word-break: break-word;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 40px;
+            padding: 10px 14px;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            resize: none;
+            font-family: inherit;
+        }
+
+        .chat-send {
+            background: #6c5ce7;
+            border-radius: 40px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #studentLayout {
+            display: none;
+            flex-direction: row;
+            gap: 18px;
+            flex: 1;
+            width: 100%;
+        }
+
+        #studentLayout.active {
+            display: flex;
+        }
+
+        .stu-teacher-panel {
+            flex: 1;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            background: #0a0a12;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .stu-self-panel {
+            flex: 0 0 340px;
+            width: 340px;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            background: #0a0a12;
+            box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.2), 0 12px 28px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #studentVideoEl {
+            width: 100% !important;
+            height: 50% !important;
+            object-fit: cover;
+            background: #000;
+            display: block;
+            flex: 0 0 50%;
+        }
+
+        .stu-chat-wrap {
+            flex: 0 0 50%;
+            height: 50%;
+            background: rgba(12, 12, 20, 0.97);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(108, 92, 231, 0.35);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .stu-chat-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stu-chat-in {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .stu-chat-in input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(108, 92, 231, 0.4);
+            border-radius: 40px;
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .stu-chat-in button {
+            background: #6c5ce7;
+            border-radius: 40px;
+            width: 38px;
+            cursor: pointer;
+        }
+
+        .control-bar {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 80px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+        }
+
+        .ctrl-btn {
+            background: rgba(30, 32, 48, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            gap: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-primary);
+        }
+
+        .ctrl-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(108, 92, 231, 0.3);
+        }
+
+        .leave-btn {
+            background: rgba(255, 70, 70, 0.2);
+            border-color: #ff5e5e;
+        }
+
+        #endClassBtn {
+            background: rgba(255, 70, 70, 0.2) !important;
+            border: 1px solid #ff5e5e !important;
+            color: #ff8a8a !important;
+        }
+
+        .connecting-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 25;
+            border-radius: inherit;
+            gap: 10px;
+        }
+
+        .connecting-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(108, 92, 231, 0.2);
+            border-top-color: #6c5ce7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .stream-label {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .end-modal-wrap,
+        .ceb-wrap {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .end-modal-wrap.show,
+        .ceb-wrap.show {
+            display: flex;
+        }
+
+        .end-modal-box {
+            background: #1e1e2e;
+            border-radius: 32px;
+            padding: 32px;
+            max-width: 420px;
+            text-align: center;
+            border: 1px solid rgba(255, 70, 70, 0.3);
+        }
+
+        .em-icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+        }
+
+        .em-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ff8a8a;
+            margin-bottom: 8px;
+        }
+
+        .em-sub {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .em-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateY(-1px);
+        }
+
+        .btn-end {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff4d4d, #c0392b);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(255, 70, 70, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-end:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 70, 70, 0.55);
+        }
+
+        .btn-end:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ceb-icon {
+            font-size: 3rem;
+        }
+
+        .ceb-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .ceb-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .ceb-wrap {
+            background: rgba(0, 0, 0, 0.9);
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .ceb-bar {
+            width: 220px;
+            height: 5px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .ceb-fill {
+            height: 100%;
+            width: 0%;
+            background: #6c5ce7;
+            transition: width 3s linear;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6c5ce7;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 780px) {
+            .meeting-container {
+                padding: 10px;
+            }
+
+            #teacherLayout,
+            #studentLayout {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .teacher-stream-wrap,
+            .stu-teacher-panel {
+                min-height: 280px;
+                flex: auto;
+            }
+
+            .stu-self-panel {
+                flex: 0 0 auto;
+                width: 100%;
+                height: 420px;
+            }
+
+            #studentVideoEl {
+                height: 50% !important;
+                flex: 0 0 50%;
+            }
+
+            .stu-chat-wrap {
+                flex: 0 0 50%;
+                height: 50%;
+            }
+
+            .teacher-right-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+                max-height: none;
+                gap: 12px;
+            }
+
+            .teacher-right-panel>* {
+                flex: 1 1 220px;
+                min-width: 200px;
+            }
+
+            .control-bar {
+                gap: 10px;
+                padding: 8px 16px;
+            }
+
+            .ctrl-btn {
+                padding: 7px 18px;
+                font-size: 0.75rem;
+            }
+
+            .top-bar-center {
+                display: none;
+            }
+
+            .top-bar {
+                justify-content: space-between;
+            }
+
+            .left-logo {
+                gap: 8px;
+            }
+
+            .left-logo .logo-text-mobile {
+                font-size: 18px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #6c5ce7, #a463f5);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                display: block;
+            }
+
+            #subjectLabel {
+                max-width: 80px;
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (min-width: 781px) {
+            .logo-text-mobile {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                border-radius: 32px;
+                padding: 6px 14px;
+            }
+
+            .brand-logo {
+                width: 32px;
+                height: 32px;
+            }
+
+            .live-badge {
+                padding: 3px 10px;
+                font-size: 0.65rem;
+            }
+
+            .ctrl-btn {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+
+            .teacher-stream-wrap,
+            .stu-teacher-panel {
+                min-height: 200px;
+            }
+
+            .stu-self-panel {
+                height: 360px;
+            }
+
+            #subjectLabel {
+                display: none;
+            }
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        video {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+            background: #000;
+            border-radius: inherit;
+        }
+
+        #studentVideoEl {
+            border-radius: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="meeting-container">
+        <header class="top-bar">
+            <div class="left-logo">
+                <div class="brand-logo" title="MirrorMind">
+                    <img src="/static/images/123.png">
+                    <defs>
+                        <linearGradient id="bgG" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#6c5ce7" />
+                            <stop offset="100%" stop-color="#a463f5" />
+                        </linearGradient>
+                        <linearGradient id="mG" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#fff" stop-opacity="1" />
+                            <stop offset="100%" stop-color="#e0d6ff" stop-opacity="0.9" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="42" height="42" rx="13" fill="url(#bgG)" />
+                    <ellipse cx="21" cy="19" rx="10" ry="8" stroke="url(#mG)" stroke-width="2.2" fill="none" />
+                    <circle cx="21" cy="19" r="3.2" fill="url(#mG)" opacity="0.95" />
+                    <rect x="14" y="28" width="14" height="2.2" rx="1.1" fill="url(#mG)" opacity="0.8" />
+                    <rect x="18" y="25" width="6" height="1.8" rx="0.9" fill="url(#mG)" opacity="0.6" />
+                    <ellipse cx="17" cy="16" rx="2.5" ry="1.4" fill="white" opacity="0.22"
+                        transform="rotate(-20 17 16)" />
+                    </svg>
+                </div>
+                <span class="logo-text-mobile">MirrorMind</span>
+            </div>
+
+            <div class="top-bar-center">
+                <span class="logo-text">MirrorMind</span>
+            </div>
+
+            <div class="top-right">
+                <span id="subjectLabel"></span>
+                <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="main-area">
+            <div id="teacherLayout">
+                <div class="teacher-stream-wrap">
+                    <div class="connecting-overlay" id="tConnectOverlay">
+                        <div class="connecting-spinner"></div>
+                        <div class="connecting-text" id="tConnectText">Starting camera...</div>
+                    </div>
+                    <video id="teacherVideoEl" autoplay playsinline muted style="display:none;"></video>
+                    <div class="stream-label stream-label-teacher"><i class="fa-solid fa-crown"
+                            style="color:gold;"></i><span id="tSelfName"> You (Host)</span></div>
+                </div>
+                <div class="teacher-right-panel">
+                    <div class="info-card">
+                        <div class="info-card-title"><i class="fa-regular fa-circle-info"></i>Class Info</div>
+                        <div class="info-row"><i class="fa-regular fa-calendar"></i><span id="tDateLabel">—</span></div>
+                        <div class="info-row"><i class="fa-solid fa-book"></i><span id="tSubjectLabel">—</span></div>
+                        <div class="info-row"><i class="fa-solid fa-chalkboard"></i><span id="tClassLabel">—</span>
+                        </div>
+                    </div>
+                    <div class="count-card">
+                        <div>
+                            <div class="count-number" id="joinedCount">0</div>
+                            <div class="count-label">Students Online</div>
+                        </div><i class="fa-solid fa-users count-icon"></i>
+                    </div>
+                    <div class="emotion-panel">
+                        <div class="emotion-panel-header"><i class="fa-solid fa-face-smile"></i>Engagement Monitor</div>
+                        <div class="emotion-list-inner" id="emotionList">
+                            <div class="no-students-msg"><i class="fa-solid fa-users"></i>Waiting for students...</div>
+                        </div>
+                    </div>
+                    <div class="chat-panel">
+                        <div class="chat-header"><i class="fa-solid fa-comment-dots"></i>Class Chat</div>
+                        <div class="chat-messages" id="teacherChatMessages"></div>
+                        <div class="chat-input-row">
+                            <textarea class="chat-input" id="teacherChatInput" placeholder="Message students..."
+                                rows="1"></textarea>
+                            <button class="chat-send" id="teacherSendBtn"><i
+                                    class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studentLayout">
+                <div class="stu-teacher-panel">
+                    <div class="connecting-overlay" id="sConnectOverlay">
+                        <div class="connecting-spinner"></div>
+                        <div class="connecting-text" id="sConnectText">Connecting to live class...</div>
+                    </div>
+                    <video id="teacherVideoEl2" autoplay playsinline style="display:none;"></video>
+                    <div class="stream-label stream-label-teacher">
+                        <i class="fa-solid fa-crown"></i>
+                        <span id="teacherNameLabel">Teacher</span>
+                        <span
+                            style="background:rgba(108,92,231,0.6); padding:2px 8px; border-radius:12px; margin-left:6px;">LIVE</span>
+                    </div>
+                </div>
+                <div class="stu-self-panel">
+                    <div class="connecting-overlay" id="selfCamOverlay">
+                        <div class="connecting-spinner"></div>
+                        <div class="connecting-text">Starting camera...</div>
+                    </div>
+                    <video id="studentVideoEl" autoplay playsinline muted></video>
+                    <div class="stream-label stream-label-you" style="bottom:52%; z-index:15;">
+                        <i class="fa-solid fa-user"></i><span id="selfNameLabel">You</span>
+                    </div>
+                    <div class="stu-chat-wrap" id="stuChatWrap">
+                        <div class="stu-chat-msgs" id="stuChatMessages"></div>
+                        <div class="stu-chat-in">
+                            <input type="text" id="stuChatInput" placeholder="Message...">
+                            <button id="stuSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-bar">
+            <button class="ctrl-btn" id="micToggle" title="Toggle mic"><i
+                    class="fa-solid fa-microphone-slash"></i></button>
+            <button class="ctrl-btn" id="camToggle" title="Toggle cam" style="display:none;"><i
+                    class="fa-solid fa-video"></i></button>
+            <button class="ctrl-btn" id="endClassBtn" title="End Class" style="display:none;"><i
+                    class="fa-solid fa-stop-circle"></i><span style="font-size:0.75rem;">End Class</span></button>
+            <button class="ctrl-btn leave-btn" id="leaveBtn" title="Leave" style="display:none;"><i
+                    class="fa-solid fa-phone" style="transform:rotate(135deg);"></i></button>
+        </div>
+    </div>
+
+    <div class="end-modal-wrap" id="endModal">
+        <div class="end-modal-box">
+            <div class="em-icon">⚠️</div>
+            <div class="em-title">End this class?</div>
+            <div class="em-sub">All students will be disconnected and marked completed. Irreversible.</div>
+            <div class="em-btns">
+                <button class="btn-cancel" id="cancelEndBtn">Cancel</button>
+                <button class="btn-end" id="confirmEndBtn">Yes, End Class</button>
+            </div>
+        </div>
+    </div>
+    <div class="ceb-wrap" id="cebWrap">
+        <div class="ceb-icon">🎓</div>
+        <div class="ceb-title">Class Ended</div>
+        <div class="ceb-sub" id="cebSub">Session has ended. Redirecting...</div>
+        <div class="ceb-bar">
+            <div class="ceb-fill" id="cebFill"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script>
+        const $ = id => document.getElementById(id);
+        const EMOTION_ICONS = { 'Happy': '😊', 'Focused': '🧠', 'Understanding': '💡', 'Neutral': '😐', 'Bored': '😒', 'Sad': '😢', 'Sleepy': '💤', 'Angry': '😠', 'Confused': '😕', 'Unavailable': '📵' };
+        const EMOTION_COLORS = { 'Happy': '#28a745', 'Focused': '#007bff', 'Understanding': '#17a2b8', 'Neutral': '#a29bfe', 'Bored': '#fd7e14', 'Sad': '#6496ff', 'Sleepy': '#dc3545', 'Angry': '#e84393', 'Confused': '#f39c12', 'Unavailable': '#6c757d' };
+        const EMOTION_REMAP = { happy: 'Happy', surprised: 'Understanding', neutral: 'Focused', disgusted: 'Confused', angry: 'Angry', fearful: 'Confused', sad: 'Sad' };
+
+        let localStream = null, peers = {}, studentPC = null;
+        let studentCount = 0, studentEmotions = {};
+        let emotionInterval = null, faceApiLoaded = false;
+        let micOn = false, camOn = true;
+        let classEnded = false;
+        let emotionWindow = [];
+        let consecutiveFails = 0;
+        let detectionCanvas = null, detectionCtx = null;
+        let lastEmotionSentAt = 0;
+
+        $('subjectLabel').textContent = SUBJECT ? `📚 ${SUBJECT}` : '';
+
+        if (ROLE === 'teacher') {
+            $('teacherLayout').classList.add('active');
+            $('endClassBtn').style.display = '';
+            $('tSelfName').textContent = USER_NAME || ' You (Host)';
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $('tDateLabel').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            $('tSubjectLabel').textContent = SUBJECT || 'N/A';
+            $('tClassLabel').textContent = CLASS_NAME || 'N/A';
+        } else {
+            $('studentLayout').classList.add('active');
+            $('leaveBtn').style.display = '';
+            $('camToggle').style.display = '';
+            $('selfNameLabel').textContent = USER_NAME || 'You';
+        }
+
+        const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        let socket = null, wsReconnectTimer = null, wsManualClose = false;
+
+        function connectWS() {
+            if (classEnded || wsManualClose) return;
+            socket = new WebSocket(`${wsProto}//${location.host}/ws/class/${SCHEDULE_ID}/`);
+            socket.onopen = () => { clearTimeout(wsReconnectTimer); ROLE === 'teacher' ? initTeacher() : initStudent(); };
+            socket.onclose = () => { if (classEnded || wsManualClose) return; wsReconnectTimer = setTimeout(connectWS, 2000); };
+            socket.onerror = e => console.error('WS error', e);
+            socket.onmessage = e => handleMessage(JSON.parse(e.data));
+        }
+        connectWS();
+
+        function wsSend(obj) { if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(obj)); }
+
+        async function initTeacher() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const v = $('teacherVideoEl'); v.srcObject = localStream; v.style.display = 'block';
+                $('tConnectOverlay').style.display = 'none';
+                micOn = true;
+                wsSend({ type: 'teacher-ready', teacher_name: USER_NAME });
+            } catch (e) { $('tConnectText').textContent = '❌ Camera / Mic access denied.'; }
+        }
+
+        async function createOffer(sChan) {
+            const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+            pc.onicecandidate = e => { if (e.candidate) wsSend({ type: 'ice-candidate', to: sChan, candidate: e.candidate }); };
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            wsSend({ type: 'offer', to: sChan, offer: pc.localDescription, teacher_name: USER_NAME });
+            peers[sChan] = pc;
+            studentCount++;
+            updateCount();
+        }
+
+        async function initStudent() {
+            wsSend({ type: 'student-joined', student_id: USER_ID, student_name: USER_NAME });
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } }, audio: false });
+                const v = $('studentVideoEl'); v.srcObject = localStream; v.style.display = 'block';
+                $('selfCamOverlay').style.display = 'none';
+                camOn = true;
+                loadFaceApi();
+            } catch (e) { $('selfCamOverlay').style.display = 'none'; sendEmotion('Unavailable', 0); }
+        }
+
+        async function handleOffer(data) {
+            $('sConnectText').textContent = 'Teacher found! Connecting stream...';
+            studentPC = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+            studentPC.ontrack = e => {
+                const v = $('teacherVideoEl2');
+                v.srcObject = e.streams[0];
+                v.style.display = 'block';
+                $('sConnectOverlay').style.display = 'none';
+                $('teacherNameLabel').textContent = data.teacher_name || 'Teacher';
+            };
+            studentPC.onicecandidate = e => { if (e.candidate) wsSend({ type: 'ice-candidate', to: data.from, candidate: e.candidate }); };
+            await studentPC.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answer = await studentPC.createAnswer();
+            await studentPC.setLocalDescription(answer);
+            wsSend({ type: 'answer', to: data.from, answer: studentPC.localDescription });
+        }
+
+        function handleMessage(data) {
+            switch (data.type) {
+                case 'teacher-ready':
+                    if (ROLE === 'student') $('sConnectText').textContent = 'Teacher is live! Joining...';
+                    break;
+                case 'student-joined':
+                    if (ROLE === 'teacher') createOffer(data.student_channel);
+                    break;
+                case 'offer':
+                    if (ROLE === 'student') handleOffer(data);
+                    break;
+                case 'answer':
+                    if (ROLE === 'teacher' && peers[data.from]) peers[data.from].setRemoteDescription(new RTCSessionDescription(data.answer)).catch(() => { });
+                    break;
+                case 'ice-candidate':
+                    if (ROLE === 'teacher' && peers[data.from]) peers[data.from].addIceCandidate(new RTCIceCandidate(data.candidate)).catch(() => { });
+                    else if (ROLE === 'student' && studentPC) studentPC.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(() => { });
+                    break;
+                case 'emotion-update':
+                    if (ROLE === 'teacher') updateEmotion(data.student_id, data.student_name, data.emotion, data.confidence);
+                    break;
+                case 'class-ended':
+                    onClassEnded();
+                    break;
+                case 'peer-disconnected':
+                    if (ROLE === 'teacher' && peers[data.channel]) {
+                        peers[data.channel].close();
+                        delete peers[data.channel];
+                        studentCount = Math.max(0, studentCount - 1);
+                        updateCount();
+                        if (studentEmotions[data.channel]) studentEmotions[data.channel].disconnected = true;
+                        renderEmotions();
+                    }
+                    break;
+                case 'chat-message':
+                    appendChatMessage(data.sender_name, data.sender_role, data.message);
+                    break;
+            }
+        }
+
+        function onClassEnded() {
+            if (classEnded) return;
+            classEnded = true;
+            wsManualClose = true;
+            const wrap = $('cebWrap');
+            wrap.classList.add('show');
+            if (ROLE === 'student') {
+                $('cebSub').textContent = 'The teacher has ended the session. Returning...';
+                setTimeout(() => { $('cebFill').style.width = '100%'; }, 50);
+                setTimeout(() => { cleanup(); location.replace('/student-dashboard/'); }, 3200);
+            } else {
+                $('cebSub').textContent = 'Class ended. Saving records...';
+                setTimeout(() => { $('cebFill').style.width = '100%'; }, 50);
+                setTimeout(() => { cleanup(); location.replace('/teacher-dashboard/'); }, 3200);
+            }
+        }
+
+        $('endClassBtn').addEventListener('click', () => $('endModal').classList.add('show'));
+        $('cancelEndBtn').addEventListener('click', () => $('endModal').classList.remove('show'));
+        $('confirmEndBtn').addEventListener('click', async () => {
+            $('endModal').classList.remove('show');
+            $('confirmEndBtn').disabled = true;
+            try {
+                const r = await fetch(`/api/end-class/${SCHEDULE_ID}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                });
+                const d = await r.json();
+                if (d.success) {
+                    wsSend({ type: 'class-ended', schedule_id: SCHEDULE_ID });
+                    onClassEnded();
+                } else {
+                    alert('Error ending class');
+                    $('confirmEndBtn').disabled = false;
+                }
+            } catch (e) { alert('Network error.'); $('confirmEndBtn').disabled = false; }
+        });
+
+        function appendChatMessage(name, role, text) {
+            const html = `<div class="chat-msg ${role}"><div class="chat-msg-name">${escHtml(name)}</div><div class="chat-msg-text">${escHtml(text)}</div></div>`;
+            if (ROLE === 'teacher') {
+                const el = $('teacherChatMessages'); el.insertAdjacentHTML('beforeend', html); el.scrollTop = el.scrollHeight;
+            } else {
+                const el = $('stuChatMessages'); el.insertAdjacentHTML('beforeend', html); el.scrollTop = el.scrollHeight;
+            }
+        }
+
+        function sendChatMessage(inputEl) {
+            const msg = inputEl.value.trim();
+            if (!msg) return;
+            wsSend({ type: 'chat-message', sender_name: USER_NAME, sender_role: ROLE, message: msg });
+            appendChatMessage(USER_NAME + ' (You)', ROLE, msg);
+            inputEl.value = '';
+        }
+
+        $('teacherSendBtn').addEventListener('click', () => sendChatMessage($('teacherChatInput')));
+        $('teacherChatInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage($('teacherChatInput')); } });
+        $('stuSendBtn').addEventListener('click', () => sendChatMessage($('stuChatInput')));
+        $('stuChatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChatMessage($('stuChatInput')); });
+
+        function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        const EMOTION_CFG = {
+            MIN_CONF: 0.42,
+            SMOOTHING_FRAMES: 10,
+            DETECT_INTERVAL: 1000,
+            INPUT_SIZE_HQ: 512,
+            INPUT_SIZE_MQ: 320,
+            INPUT_SIZE_LQ: 224,
+            SCORE_THRESH_HQ: 0.48,
+            SCORE_THRESH_MQ: 0.38,
+            SCORE_THRESH_LQ: 0.28,
+            BRIGHTNESS_TARGET: 130,
+            DB_LOG_INTERVAL: 10000,
+            MAX_FAILS: 6
+        };
+
+        async function loadFaceApi() {
+            try {
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri('/static/models'),
+                    faceapi.nets.faceExpressionNet.loadFromUri('/static/models')
+                ]);
+                faceApiLoaded = true;
+                startDetection();
+            } catch (e) {
+                console.warn('Face-API load failed, using server fallback:', e);
+                startFallback();
+            }
+        }
+
+        function preprocessFrame(videoEl) {
+            if (!detectionCanvas) {
+                detectionCanvas = document.createElement('canvas');
+                detectionCtx = detectionCanvas.getContext('2d');
+            }
+            const w = videoEl.videoWidth || 640;
+            const h = videoEl.videoHeight || 480;
+            detectionCanvas.width = w;
+            detectionCanvas.height = h;
+            detectionCtx.drawImage(videoEl, 0, 0, w, h);
+            try {
+                const imgData = detectionCtx.getImageData(0, 0, w, h);
+                const d = imgData.data;
+                let sum = 0, count = 0;
+                for (let i = 0; i < d.length; i += 4 * 8) {
+                    sum += d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+                    count++;
+                }
+                const meanBright = sum / count;
+                const bf = Math.min(Math.max(EMOTION_CFG.BRIGHTNESS_TARGET / Math.max(meanBright, 20), 0.5), 3.0);
+                const gamma = 0.85;
+                const cf = bf > 1.3 ? 1.15 : 1.0;
+                const lut = new Uint8ClampedArray(256);
+                for (let j = 0; j < 256; j++) {
+                    lut[j] = Math.min(255, Math.round(Math.pow(j / 255, gamma) * 255 * bf * cf));
+                }
+                for (let i = 0; i < d.length; i += 4) {
+                    d[i] = lut[d[i]];
+                    d[i + 1] = lut[d[i + 1]];
+                    d[i + 2] = lut[d[i + 2]];
+                }
+                detectionCtx.putImageData(imgData, 0, 0);
+            } catch (_) { }
+            return detectionCanvas;
+        }
+
+        function smoothEmotion(rawEmotion, rawConf) {
+            if (rawEmotion === 'Unavailable') {
+                emotionWindow = [];
+                return { emotion: 'Unavailable', conf: rawConf };
+            }
+            emotionWindow.push({ emotion: rawEmotion, conf: rawConf });
+            if (emotionWindow.length > EMOTION_CFG.SMOOTHING_FRAMES) emotionWindow.shift();
+            if (emotionWindow.length < 2) return { emotion: rawEmotion, conf: rawConf };
+            const votes = {};
+            const n = emotionWindow.length;
+            emotionWindow.forEach((item, idx) => {
+                const w = Math.pow((idx + 1) / n, 1.5) * item.conf;
+                votes[item.emotion] = (votes[item.emotion] || 0) + w;
+            });
+            const [winner, score] = Object.entries(votes).sort(([, a], [, b]) => b - a)[0];
+            const total = Object.values(votes).reduce((a, b) => a + b, 0);
+            return { emotion: winner, conf: Math.min(0.99, score / total) };
+        }
+
+        function classifyExpression(exp) {
+            const happy = exp.happy || 0;
+            const sad = exp.sad || 0;
+            const angry = exp.angry || 0;
+            const fearful = exp.fearful || 0;
+            const disgusted = exp.disgusted || 0;
+            const neutral = exp.neutral || 0;
+            const surprised = exp.surprised || 0;
+            const sorted = Object.entries(exp).sort(([, a], [, b]) => b - a);
+            const [topRaw, topConf] = sorted[0];
+
+            if (happy > 0.55) return 'Happy';
+            if (surprised > 0.50 && happy > 0.15) return 'Understanding';
+            if (sad > 0.50 && happy < 0.15 && fearful < 0.20) return 'Sad';
+            if (angry > 0.45) return 'Angry';
+            if (sad + fearful > 0.55 && happy < 0.10) return 'Sleepy';
+            if (disgusted > 0.45 || fearful > 0.40) return 'Confused';
+            if (neutral > 0.60 && sad > 0.10 && happy < 0.10) return 'Bored';
+            if (topConf < EMOTION_CFG.MIN_CONF) return 'Focused';
+            return EMOTION_REMAP[topRaw] || 'Neutral';
+        }
+
+        async function startDetection() {
+            if (emotionInterval) clearInterval(emotionInterval);
+            const vid = $('studentVideoEl');
+            emotionInterval = setInterval(async () => {
+                if (!faceApiLoaded || !vid || vid.readyState < 2 || vid.paused) return;
+                try {
+                    const canvas = preprocessFrame(vid);
+                    let det = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: EMOTION_CFG.INPUT_SIZE_HQ, scoreThreshold: EMOTION_CFG.SCORE_THRESH_HQ })).withFaceExpressions();
+                    if (!det) det = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: EMOTION_CFG.INPUT_SIZE_MQ, scoreThreshold: EMOTION_CFG.SCORE_THRESH_MQ })).withFaceExpressions();
+                    if (!det) det = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({ inputSize: EMOTION_CFG.INPUT_SIZE_LQ, scoreThreshold: EMOTION_CFG.SCORE_THRESH_LQ })).withFaceExpressions();
+
+                    if (det && det.expressions) {
+                        consecutiveFails = 0;
+                        const label = classifyExpression(det.expressions);
+                        const rawConf = det.expressions[Object.entries(det.expressions).sort(([, a], [, b]) => b - a)[0][0]];
+                        const smoothed = smoothEmotion(label, rawConf);
+                        sendEmotion(smoothed.emotion, smoothed.conf);
+                    } else {
+                        consecutiveFails++;
+                        if (consecutiveFails >= EMOTION_CFG.MAX_FAILS) {
+                            emotionWindow = [];
+                            consecutiveFails = EMOTION_CFG.MAX_FAILS;
+                            sendEmotion('Unavailable', 1.0);
+                        }
+                    }
+                } catch (err) { consecutiveFails++; }
+            }, EMOTION_CFG.DETECT_INTERVAL);
+        }
+
+        function sendEmotion(label, conf) {
+            const now = Date.now();
+            const throttle = (label === 'Unavailable') ? 5000 : EMOTION_CFG.DB_LOG_INTERVAL;
+            const shouldLog = (now - lastEmotionSentAt) >= throttle;
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'emotion-update',
+                    student_id: USER_ID,
+                    student_name: USER_NAME,
+                    emotion: label,
+                    confidence: parseFloat((conf || 0).toFixed(3)),
+                    log_to_db: shouldLog
+                }));
+                if (shouldLog) lastEmotionSentAt = now;
+            }
+        }
+
+        function startFallback() {
+            const vid = $('studentVideoEl');
+            const fb = document.createElement('canvas');
+            const fc = fb.getContext('2d');
+            emotionInterval = setInterval(async () => {
+                if (!vid || vid.readyState < 2) return;
+                try {
+                    fb.width = 320; fb.height = 240;
+                    fc.drawImage(vid, 0, 0, 320, 240);
+                    const imageData = fb.toDataURL('image/jpeg', 0.75);
+                    const res = await fetch('/api/detect-emotion/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                        body: JSON.stringify({ image: imageData, student_id: USER_ID })
+                    });
+                    if (res.ok) {
+                        const d = await res.json();
+                        if (d.emotion) {
+                            const mapped = EMOTION_REMAP[d.emotion] || d.mapped_emotion || 'Neutral';
+                            const smoothed = smoothEmotion(mapped, d.confidence || 0.75);
+                            sendEmotion(smoothed.emotion, smoothed.conf);
+                        }
+                    }
+                } catch (_) { sendEmotion('Neutral', 0.7); }
+            }, 3000);
+        }
+
+        function updateEmotion(id, name, emotion, confidence) {
+            if (!id) return;
+            studentEmotions[id] = { name, emotion, confidence, ts: Date.now() };
+            renderEmotions();
+        }
+
+        function renderEmotions() {
+            const list = Object.entries(studentEmotions);
+            if (!list.length) {
+                $('emotionList').innerHTML = '<div class="no-students-msg"><i class="fa-solid fa-users"></i>Waiting for students...</div>';
+                return;
+            }
+            $('emotionList').innerHTML = list.map(([id, d]) => {
+                const icon = EMOTION_ICONS[d.emotion] || '😐';
+                const color = EMOTION_COLORS[d.emotion] || '#6c757d';
+                const pct = Math.round((d.confidence || 0) * 100);
+                return `<div class="esc" style="border-left:3px solid ${color}55; padding-left:8px;"><div class="esc-icon" style="background:${color}22; color:${color};">${icon}</div><div style="flex:1"><div class="esc-name">${d.name || 'Student'}${d.disconnected ? ' <span style="font-size:0.6rem;">(left)</span>' : ''}</div><div class="esc-sub" style="color:${color};">${d.emotion} · ${pct}%</div></div><div class="esc-dot" style="background:${color};"></div></div>`;
+            }).join('');
+        }
+
+        function updateCount() { const e = $('joinedCount'); if (e) e.textContent = studentCount; }
+
+        $('micToggle').addEventListener('click', () => {
+            if (!localStream) return;
+            const tracks = localStream.getAudioTracks();
+            if (!tracks.length) return;
+            micOn = !micOn;
+            tracks[0].enabled = micOn;
+            $('micToggle').innerHTML = micOn ? '<i class="fa-solid fa-microphone"></i>' : '<i class="fa-solid fa-microphone-slash"></i>';
+            $('micToggle').style.background = micOn ? '' : 'rgba(255,70,70,0.2)';
+        });
+
+        $('camToggle').addEventListener('click', () => {
+            if (!localStream) return;
+            const tracks = localStream.getVideoTracks();
+            if (!tracks.length) return;
+            camOn = !camOn;
+            tracks[0].enabled = camOn;
+            $('camToggle').innerHTML = camOn ? '<i class="fa-solid fa-video"></i>' : '<i class="fa-solid fa-video-slash"></i>';
+            $('camToggle').style.background = camOn ? '' : 'rgba(255,70,70,0.2)';
+            if (!camOn) sendEmotion('Unavailable', 1.0);
+        });
+
+        $('leaveBtn').addEventListener('click', () => { wsManualClose = true; cleanup(); location.replace('/student-dashboard/'); });
+
+        $('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            $('themeIcon').className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        });
+
+        function cleanup() {
+            if (emotionInterval) clearInterval(emotionInterval);
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            if (studentPC) studentPC.close();
+            Object.values(peers).forEach(pc => pc.close());
+            clearTimeout(wsReconnectTimer);
+            if (socket && socket.readyState === WebSocket.OPEN) socket.close();
+        }
+
+        window.addEventListener('beforeunload', () => {
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            Object.values(peers).forEach(pc => pc.close());
+            if (studentPC) studentPC.close();
+        });
+
+        function getCookie(name) { const m = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)'); return m ? m[2] : ''; }
+    </script>
+</body>
+
+</html>

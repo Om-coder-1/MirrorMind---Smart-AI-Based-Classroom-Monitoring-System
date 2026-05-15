@@ -1,0 +1,465 @@
+<!-- filename: teacher_signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Signup | MirrorMind</title>
+    <link rel="stylesheet" href="/static/css/teacher/teacher_signup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <div class="animated-background">
+        <div class="particle-layer"></div>
+        <div class="grid-layer"></div>
+        <div class="orbs-layer">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="wave-layer"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="logo-header">
+                <div class="logo-gradient">
+                    <div class="logo-container">
+                        <div class="logo-pulse"></div>
+                        <h1 class="logo-text">MirrorMind</h1>
+                    </div>
+                </div>
+                <p class="tagline">Empowering Educators, Inspiring Minds</p>
+            </div>
+
+            <div class="toast-container" id="toastContainer"></div>
+
+            <div class="loading-overlay hidden" id="loadingOverlay">
+                <div class="spinner"></div>
+                <p>Creating your account...</p>
+            </div>
+
+            <div class="signup-card">
+                <div class="card-hover-glow"></div>
+
+                <div class="card-header">
+                    <div class="logo-icon">
+                        <img src="/static/images/123.png" alt="MirrorMind" class="card-logo-img">
+                    </div>
+                    <h2>Teacher Registration</h2>
+                    <p>Join our platform to create and manage courses</p>
+                </div>
+
+                <div class="progress-indicator">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill" style="width: 50%;"></div>
+                        <div class="progress-glow"></div>
+                    </div>
+                    <div class="step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span>Details</span>
+                        <div class="step-hover-glow"></div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span>Security</span>
+                        <div class="step-hover-glow"></div>
+                    </div>
+                </div>
+
+                <form id="teacherSignupForm" class="signup-form">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="form-step active" id="step1">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="first_name" class="form-label">First Name *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="first_name_error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="last_name" class="form-label">Last Name *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="last_name" name="last_name" required placeholder="Enter your last name">
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="last_name_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="teacher_id" class="form-label">Teacher ID *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="teacher_id" name="teacher_id" required placeholder="Enter teacher/employee ID">
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="teacher_id_error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="email" id="email" name="email" required placeholder="teacher@example.com">
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="email_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="college_code" class="form-label">College Code *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="college_code" name="college_code" required placeholder="Enter college code">
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="college_code_error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="college_name" class="form-label">College Name</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M12 3L1 9l11 6 11-6-11-6zm0 11.5L3.53 11 12 7l8.47 4L12 14.5zM12 18l-8.47-4L12 10l8.47 4L12 18z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="college_name" name="college_name" placeholder="College name will appear here" readonly>
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="college_id" name="college_id">
+
+                        <div class="form-group full-width">
+                            <label for="department_select" class="form-label">Department *</label>
+                            <select id="department_select" name="department_id" required>
+                                <option value="">Select Department</option>
+                            </select>
+                            <div class="or-divider">
+                                <span>OR</span>
+                            </div>
+                            <input type="text" id="department_input" name="department_name" placeholder="Enter new department">
+                            <div class="validation-error" id="department_error"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="qualification" class="form-label">Qualification</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                            </svg>
+                                        </div>
+                                        <select id="qualification" name="qualification">
+                                            <option value="">Select qualification</option>
+                                            <option value="phd">PhD</option>
+                                            <option value="masters">Master's Degree</option>
+                                            <option value="bachelors">Bachelor's Degree</option>
+                                            <option value="diploma">Diploma</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="qualification_error"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="experience" class="form-label">Experience</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                                            </svg>
+                                        </div>
+                                        <select id="experience" name="experience">
+                                            <option value="">Select experience</option>
+                                            <option value="0-2">0-2 years</option>
+                                            <option value="3-5">3-5 years</option>
+                                            <option value="6-10">6-10 years</option>
+                                            <option value="10+">10+ years</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="validation-error" id="experience_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="terms" name="terms" value="true" required>
+                                <label for="terms" class="terms-label">
+                                    I agree to the <a href="/term-condition/" class="link">Terms of Service</a> and
+                                    <a href="/privacy-policy/" class="link">Privacy Policy</a> *
+                                </label>
+                                <div class="checkbox-animation"></div>
+                            </div>
+                            <div class="validation-error" id="terms_error"></div>
+                        </div>
+
+                        <div id="otpSection" class="otp-verification-section hidden">
+                            <div class="section-svg-separator">
+                                <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+                                    <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                                    <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
+                                </svg>
+                            </div>
+
+                            <div class="otp-header">
+                                <div class="otp-icon-container">
+                                    <svg class="otp-icon" viewBox="0 0 24 24">
+                                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                                    </svg>
+                                    <div class="otp-icon-glow"></div>
+                                </div>
+                                <h4>Email Verification</h4>
+                                <p>We've sent a 6-digit code to <span id="verificationEmail" class="verification-email"></span></p>
+                            </div>
+
+                            <div class="otp-inputs">
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="0" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="1" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="2" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="3" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="4" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                                <div class="otp-digit-container">
+                                    <input type="text" class="otp-digit" maxlength="1" data-index="5" autocomplete="off">
+                                    <div class="otp-digit-glow"></div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="otp" name="otp">
+
+                            <div class="otp-timer">
+                                <div class="timer-container">
+                                    <svg class="timer-svg" viewBox="0 0 24 24">
+                                        <circle class="timer-circle" cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                    <p>Code expires in: <span id="otpCountdown">05:00</span></p>
+                                </div>
+                            </div>
+
+                            <div class="otp-actions">
+                                <button type="button" id="verifyOtpBtn" class="btn-primary btn-verify-otp">
+                                    <span class="btn-text">Verify & Continue</span>
+                                    <span class="btn-loader"></span>
+                                </button>
+                                <button type="button" id="resendOtpBtn" class="btn-secondary btn-resend" disabled>
+                                    Resend Code
+                                </button>
+                            </div>
+
+                            <div class="validation-error" id="otp_error"></div>
+
+                            <div id="otpVerificationResult" class="otp-verification-result hidden">
+                                <div class="verification-success">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    <div>
+                                        <h5>Email Verified Successfully!</h5>
+                                        <p>You can now proceed to set up your password.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons" id="sendOtpContainer">
+                            <button type="button" class="btn-primary btn-next" id="sendOtpBtn">
+                                <span class="btn-text">Continue to Verification</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step2">
+                        <div class="security-container">
+                            <div class="security-header">
+                                <div class="security-icon-container">
+                                    <svg class="security-icon" viewBox="0 0 24 24">
+                                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                                    </svg>
+                                    <div class="security-icon-glow"></div>
+                                </div>
+                                <h3>Account Security</h3>
+                                <p>Create a strong password</p>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="password" class="form-label">Password *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                                        <button type="button" class="toggle-password" data-target="password">
+                                            <svg class="eye-icon" viewBox="0 0 24 24">
+                                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="password-strength" id="passwordStrength">
+                                        <div class="strength-bar">
+                                            <div class="strength-fill" id="strengthFill"></div>
+                                            <div class="strength-particles"></div>
+                                        </div>
+                                        <div class="strength-text">Password strength: <span id="strengthText">None</span></div>
+                                    </div>
+                                    <div class="validation-error" id="password_error"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-with-icon">
+                                    <label for="confirm_password" class="form-label">Confirm Password *</label>
+                                    <div class="input-field">
+                                        <div class="input-icon-container">
+                                            <svg class="input-icon" viewBox="0 0 24 24">
+                                                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                                            </svg>
+                                        </div>
+                                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter your password">
+                                        <button type="button" class="toggle-password" data-target="confirm_password">
+                                            <svg class="eye-icon" viewBox="0 0 24 24">
+                                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="input-effects">
+                                        <div class="focus-border"></div>
+                                        <div class="input-glow"></div>
+                                    </div>
+                                    <div class="password-match" id="passwordMatch"></div>
+                                    <div class="validation-error" id="confirm_password_error"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons step-nav">
+                            <button type="button" class="btn-secondary btn-prev" data-prev="1">
+                                <svg class="btn-icon" viewBox="0 0 24 24">
+                                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                                </svg>
+                                <span class="btn-text">Back</span>
+                            </button>
+                            <button type="submit" class="btn-primary" id="finalSubmitBtn">
+                                <span class="btn-text">Create Account</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card-footer">
+                    <p>Already have an account? <a href="/teacher-login/">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/teacher/teacher_signup.js"></script>
+</body>
+</html>

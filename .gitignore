@@ -1,0 +1,24 @@
+# Environment & Secrets
+.env
+Authentication.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Face data (sensitive)
+MirrorMind/data/
+attendance/data/
+attendance/attendance_records/
+
+# OS
+.DS_Store
+Thumbs.d

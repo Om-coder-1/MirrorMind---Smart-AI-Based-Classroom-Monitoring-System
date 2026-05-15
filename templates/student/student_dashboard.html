@@ -1,0 +1,368 @@
+<!-- filename: student_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirrorMind - Student Dashboard</title>
+    <link rel="stylesheet" href="/static/css/student/student_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <input type="hidden" id="student_id" value="{{ student.id }}">
+    <input type="hidden" id="student_college_id" value="{{ student.college.id }}">
+    <input type="hidden" id="student_dept_id" value="{{ student.department.id }}">
+    <input type="hidden" id="student_class_id" value="{{ student.student_class.id }}">
+    <input type="hidden" id="student_enrollment" value="{{ enrollment_no }}">
+    <input type="hidden" id="student_full_name" value="{{ student_name }}">
+    <input type="hidden" id="today_date" value="{{ today_date }}">
+</head>
+
+<body>
+    <div class="loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="ai-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-core"></div>
+            </div>
+            <div class="loader-text">MirrorMind Initializing</div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="/static/images/123.png" alt="MirrorMind Logo" class="step-icon">
+                    </div>
+                    <h2>MirrorMind</h2>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-tab="dashboard">
+                        <a href="#">
+                            <i class="fas fa-th-large"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <div class="active-indicator"></div>
+                    </li>
+                    <li data-tab="schedules">
+                        <a href="#">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>My Classes</span>
+                        </a>
+                    </li>
+                    <li data-tab="notifications">
+                        <a href="#">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                            {% if unread_count > 0 %}
+                            <span class="sidebar-badge">{{ unread_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li data-tab="chatbot">
+                        <a href="#">
+                            <i class="fas fa-robot"></i>
+                            <span>Study Assistant</span>
+                        </a>
+                    </li>
+                    <li data-tab="logout">
+                        <a href="#">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <div class="menu-toggle" onclick="toggleMenu()">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <div class="welcome-text">
+                        <h1>Welcome back, <span class="student-name">{{ student_name }}</span></h1>
+                        <p>Here's your learning dashboard</p>
+                    </div>
+                </div>
+                <div class="navbar-right">
+                    <div class="notification-wrapper">
+                        <div class="notification-icon" id="notificationBell">
+                            <i class="fas fa-bell"></i>
+                            {% if unread_count == 0 %}
+                            <div class="pulse-dot" style="display:none;"></div>
+                            {% else %}
+                            <div class="pulse-dot"></div>
+                            {% endif %}
+
+                            {% if unread_count == 0 %}
+                            <span class="notification-count" id="headerNotificationCount" style="display:none;">{{
+                                unread_count }}</span>
+                            {% else %}
+                            <span class="notification-count" id="headerNotificationCount">{{ unread_count }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <button class="mark-read" id="markAllRead">Mark all read</button>
+                            </div>
+                            <div class="dropdown-content" id="notificationsList">
+                                {% if recent_notifications %}
+                                {% for n in recent_notifications %}
+                                {% if not n.is_read %}
+                                <div class="notification-item unread" data-id="{{ n.id }}">
+                                    {% else %}
+                                    <div class="notification-item" data-id="{{ n.id }}">
+                                        {% endif %}
+                                        <div class="notification-icon-small 
+                                                {% if n.notification_type == 'class_started' %}success
+                                                {% elif n.notification_type == 'schedule_cancelled' %}alert
+                                                {% else %}info{% endif %}">
+                                            <i class="fas 
+                                                    {% if n.notification_type == 'class_started' %}fa-video
+                                                    {% elif n.notification_type == 'schedule_cancelled' %}fa-times-circle
+                                                    {% else %}fa-bell{% endif %}"></i>
+                                        </div>
+                                        <div class="notification-content">
+                                            <h4>{{ n.title }}</h4>
+                                            <p>{{ n.message|truncatechars:50 }}</p>
+                                            <span class="notification-time">{{ n.created_at|timesince }} ago</span>
+                                        </div>
+                                        <button class="notification-close"
+                                            onclick="removeNotification(this, {{ n.id }})">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="no-notifications">No notifications</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="user-profile">
+                            <div class="profile-info">
+                                <span class="profile-name">{{ student_name }}</span>
+                                <span class="profile-role">Class : {{ class_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+            </header>
+
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="dashboard-stack">
+                    <div class="dashboard-card student-info-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="student-details">
+                                <h2>{{ student_name }}</h2>
+                                <div class="detail-row">
+                                    <i class="fas fa-id-card"></i>
+                                    <span>Enrollment No: <strong>{{ enrollment_no }}</strong></span>
+                                </div>
+                                <div class="detail-row">
+                                    <i class="fas fa-building"></i>
+                                    <span>Department: <strong>{{ department }}</strong></span>
+                                </div>
+                                <div class="detail-row">
+                                    <i class="fas fa-users"></i>
+                                    <span>Class: <strong>{{ class_name }}</strong></span>
+                                </div>
+                                <div class="detail-row">
+                                    <i class="fas fa-university"></i>
+                                    <span>College: <strong>{{ college_name }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card today-classes-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-calendar-day"></i> Today's Classes ({{ today_date }})</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="classes-list" id="todayClassesList">
+                                {% if schedules %}
+                                {% for s in schedules %}
+                                {% if s.status == 'ongoing' %}
+                                <div class="class-item live">
+                                    {% else %}
+                                    <div class="class-item upcoming">
+                                        {% endif %}
+                                        <div class="class-time">
+                                            <span class="time">{{ s.start_time|time:"g:i A" }}</span>
+                                            {% if s.status == 'ongoing' %}
+                                            <span class="status live">LIVE NOW</span>
+                                            {% else %}
+                                            <span class="status upcoming">Scheduled</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="class-details">
+                                            <h4>{{ s.course_allocation.subject_name }}</h4>
+                                            <p><i class="fas fa-user-tie"></i> {{ s.teacher.full_name }}</p>
+                                        </div>
+                                        {% if s.status == 'ongoing' %}
+                                        <button class="btn btn-primary join-now-btn" data-schedule-id="{{ s.id }}">
+                                            <i class="fas fa-video"></i> Join Now
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="no-classes">No classes scheduled for today</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card subjects-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-book"></i> My Subjects</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="subjects-grid" id="subjectsGrid">
+                                    {% for subject in subjects %}
+                                    <div class="subject-item">
+                                        <div class="subject-header">
+                                            <h4>{{ subject.subject_name }}</h4>
+                                        </div>
+                                        <div class="subject-details">
+                                            <p class="teacher">
+                                                <i class="fas fa-user-tie"></i>
+                                                {% if subject.teacher %}
+                                                {{ subject.teacher.full_name }}
+                                                {% else %}
+                                                Not Assigned Yet
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="no-subjects">No subjects allocated yet</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="schedules-tab">
+                    <div class="schedules-container">
+                        <h2 class="tab-title">My Scheduled Classes</h2>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="today">Today</button>
+                            <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                            <button class="filter-btn" data-filter="completed">Completed</button>
+                        </div>
+                        <div class="schedules-list" id="allSchedulesList">
+                            <div class="loading-spinner">Loading classes...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="chatbot-tab">
+                    <div class="chatbot-container">
+                        <div class="chatbot-header">
+                            <div class="chatbot-header-content">
+                                <div class="chatbot-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="chatbot-title">
+                                    <h2 class="tab-title">MirrorMind Study Assistant</h2>
+                                    <p class="chatbot-subtitle">Ask me anything about your studies!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chatbot-messages" id="chatMessages">
+                            <div class="message bot-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hi! I'm your MirrorMind Study Assistant. I can help you with:</p>
+                                    <ul class="welcome-suggestions">
+                                        <li>📚 Subject explanations and concepts</li>
+                                        <li>📅 Schedule and attendance queries</li>
+                                        <li>✏️ Study tips and academic help</li>
+                                        <li>🔬 Science, Math, and more!</li>
+                                    </ul>
+                                    <p>What would you like to learn about today?</p>
+                                    <span class="message-time">Just now</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chatbot-input-area">
+                            <div class="suggestions-container" id="suggestionsContainer">
+                                <button class="suggestion-chip" data-question="Explain photosynthesis">🌱
+                                    Photosynthesis</button>
+                                <button class="suggestion-chip" data-question="What is Newton's second law?">⚡ Newton's
+                                    Law</button>
+                                <button class="suggestion-chip" data-question="Summarize cell division">🔬 Cell
+                                    Division</button>
+                                <button class="suggestion-chip" data-question="What is the Pythagorean theorem?">📐
+                                    Pythagorean Theorem</button>
+                            </div>
+                            <div class="input-wrapper">
+                                <textarea class="chatbot-input" id="chatInput"
+                                    placeholder="Type your study question here..." rows="1"></textarea>
+                                <button class="chatbot-send-btn" id="sendMessageBtn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            <p class="chatbot-hint">Ask me anything about your studies!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="notifications-tab">
+                    <div class="notifications-container">
+                        <h2 class="tab-title">All Notifications</h2>
+                        <div class="notifications-list" id="allNotificationsList">
+                            <div class="loading-spinner">Loading notifications...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="logout-tab">
+                    <div class="logout-container">
+                        <div class="logout-card">
+                            <div class="logout-icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                            <h2 class="logout-title">Logout</h2>
+                            <p class="logout-message">Are you sure you want to logout from MirrorMind?</p>
+                            <div class="logout-actions">
+                                <button class="btn btn-secondary cancel-logout">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                                <button class="btn btn-primary confirm-logout">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="/static/js/student/student_dashboard.js"></script>
+</body>
+
+</html>

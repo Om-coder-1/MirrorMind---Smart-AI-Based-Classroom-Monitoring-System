@@ -1,0 +1,403 @@
+<!Doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MirrorMind · Privacy policy</title>
+    <!-- Inter – clean, modern, enterprise -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/other/privacy_policy.css" />
+  </head>
+  <body>
+    <!-- LAYOUT: left content (70%) + right sticky nav (30%) -->
+    <div class="page-layout">
+      <!-- LEFT MAIN CONTENT (sections) -->
+      <div class="main-content">
+        <div class="content-inner">
+          <!-- privacy header (no main navbar) -->
+          <div class="privacy-header">
+            <h1>Privacy Policy</h1>
+            <div class="hero-meta">
+              <strong>Effective Date:</strong> March 1, 2026 &nbsp; | &nbsp;
+              <strong>Last Updated:</strong> February 20, 2026
+            </div>
+          </div>
+
+          <!-- sections with ids -->
+          <section id="introduction" class="policy-section section-card">
+            <h2>1. Introduction</h2>
+            <p>
+              MirrorMind is an academic AI‑powered smart classroom monitoring
+              and analytics platform developed for educational institutions.
+              This Privacy Policy describes how the platform processes
+              information when students and teachers use features such as face
+              recognition attendance, emotion detection, live class monitoring,
+              and email OTP verification.
+            </p>
+            <p>
+              The system is designed to support learning engagement and
+              attendance tracking within a controlled academic environment.
+              MirrorMind does not perform any surveillance outside scheduled
+              classroom sessions. All processing of biometric data requires
+              explicit consent, and personal information is never sold or used
+              for advertising. This policy reflects our commitment to
+              transparency and data protection in an educational context.
+            </p>
+          </section>
+
+          <section
+            id="information-we-collect"
+            class="policy-section section-card"
+          >
+            <h2>2. Information We Collect</h2>
+
+            <div class="subsection" id="personal-information">
+              <h3>2.1 Personal Information</h3>
+              <p>
+                Full name, institutional email address (used for
+                <strong>email OTP verification</strong>), role (student or
+                teacher), and optional profile picture. This information is
+                necessary for account creation, secure login, and role‑based
+                access to classes.
+              </p>
+            </div>
+
+            <div class="subsection" id="biometric-data">
+              <h3>2.2 Biometric Data</h3>
+              <p>
+                Facial recognition templates (mathematical representations known
+                as “embeddings”) generated immediately before a student joins a
+                live class. These are used solely for attendance verification.
+                Raw video frames are processed in memory; only encrypted
+                embeddings are retained. No facial images are permanently
+                stored.
+              </p>
+            </div>
+
+            <div class="subsection" id="classroom-analytics">
+              <h3>2.3 Classroom Analytics Data</h3>
+              <p>
+                During a live session, emotion indicators (e.g., attentive,
+                confused, engaged) are derived from video streams using DeepFace
+                / TensorFlow. These indicators are aggregated at the classroom
+                level; individual identities are not included in the analytics
+                dashboard. Teachers see only anonymised engagement trends, not
+                personal emotional data.
+              </p>
+            </div>
+
+            <div class="subsection" id="technical-data">
+              <h3>2.4 Technical Data</h3>
+              <p>
+                Device type, browser version, IP address, camera permission
+                status, and system logs. This information helps maintain
+                security, troubleshoot issues, and ensure compatibility with the
+                platform’s WebSocket and OpenCV components.
+              </p>
+            </div>
+            <div class="legal-block">
+              <p>
+                <strong>Explicit consent for biometrics:</strong> MirrorMind
+                obtains opt‑in consent from students (or their guardians for
+                minors) before any face recognition or emotion detection takes
+                place. Consent may be withdrawn at any time through the
+                institutional administrator.
+              </p>
+            </div>
+          </section>
+
+          <section id="how-we-use" class="policy-section section-card">
+            <h2>3. How We Use Information</h2>
+            <ul>
+              <li>Authenticate users via email OTP and role‑based login.</li>
+              <li>
+                Perform face matching to record attendance before class entry.
+              </li>
+              <li>
+                Generate real‑time, aggregated engagement metrics for teachers.
+              </li>
+              <li>
+                Maintain secure, encrypted biometric templates for the duration
+                of the course.
+              </li>
+              <li>
+                Improve platform accuracy using de‑identified aggregate data.
+              </li>
+              <li>
+                Ensure compliance with academic integrity and security policies.
+              </li>
+            </ul>
+            <p>
+              <strong>No commercial use:</strong> Personal and biometric data
+              are used exclusively for educational analytics and attendance.
+              MirrorMind does not sell, rent, or share any information with
+              advertisers or third‑party marketing entities.
+            </p>
+          </section>
+
+          <section id="biometric-policy" class="policy-section section-card">
+            <h2>4. Biometric Data & Face Recognition Policy</h2>
+            <p>
+              MirrorMind’s use of facial recognition is strictly limited to
+              attendance and classroom engagement analysis. Our specific
+              commitments:
+            </p>
+            <ul>
+              <li>
+                Face embeddings are encrypted (AES‑256) and stored separately
+                from names or direct identifiers.
+              </li>
+              <li>
+                Raw video is processed ephemerally — it is never written to disk
+                or retained after the session ends.
+              </li>
+              <li>
+                Emotion detection outputs are aggregated; no individual
+                emotional profile is created or accessible.
+              </li>
+              <li>
+                Students cannot view other students’ analytics; only teachers
+                and authorised institutional staff see aggregated class data.
+              </li>
+              <li>
+                Explicit consent is obtained before any biometric capture, and a
+                clear opt‑out mechanism is available via the educational
+                institution.
+              </li>
+              <li>
+                Biometric data is never used for surveillance, commercial
+                research, or any purpose outside the defined academic features.
+              </li>
+            </ul>
+          </section>
+
+          <section id="storage-security" class="policy-section section-card">
+            <h2>5. Data Storage & Security</h2>
+            <p>
+              All data in transit is encrypted using TLS 1.3. Stored data,
+              including biometric embeddings and personal information, is
+              encrypted at rest with AES‑256. The platform runs on secure
+              academic infrastructure; access is restricted to authorised system
+              administrators and institutional staff. Regular vulnerability
+              assessments are conducted in line with academic project
+              guidelines. Raw classroom video is processed in memory and not
+              permanently recorded.
+            </p>
+          </section>
+
+          <section id="data-sharing" class="policy-section section-card">
+            <h2>6. Data Sharing</h2>
+            <p>
+              MirrorMind limits data sharing to the following essential
+              contexts:
+            </p>
+            <ul>
+              <li>
+                With the educational institution that has deployed MirrorMind
+                (teachers, administrators).
+              </li>
+              <li>
+                With subprocessors such as cloud hosting providers, who are
+                bound by strict data protection terms.
+              </li>
+              <li>
+                If required to comply with a legal obligation or valid request
+                from a public authority.
+              </li>
+              <li>
+                With explicit consent from the individual or their
+                parent/guardian.
+              </li>
+            </ul>
+            <p>
+              No biometric templates, video data, or personal information is
+              shared with external commercial entities, advertisers, or
+              non‑academic third parties.
+            </p>
+          </section>
+
+          <section id="user-rights" class="policy-section section-card">
+            <h2>7. User Rights</h2>
+            <p>
+              As a user of MirrorMind (student, teacher, or parent/guardian),
+              you have the following rights regarding your personal data:
+            </p>
+            <ul>
+              <li>
+                <strong>Access:</strong> request a copy of the personal and
+                biometric data held about you.
+              </li>
+              <li>
+                <strong>Rectification:</strong> correct inaccurate or incomplete
+                information.
+              </li>
+              <li>
+                <strong>Erasure (right to be forgotten):</strong> request
+                deletion of your data, including face embeddings, after course
+                completion or at any time.
+              </li>
+              <li>
+                <strong>Restriction of processing:</strong> temporarily suspend
+                data use while a request is evaluated.
+              </li>
+              <li>
+                <strong>Data portability:</strong> receive a structured,
+                machine‑readable copy of your data (where technically feasible).
+              </li>
+              <li>
+                <strong>Withdrawal of consent:</strong> withdraw consent for
+                biometric processing at any time without affecting the
+                lawfulness of processing before withdrawal.
+              </li>
+            </ul>
+            <p>
+              To exercise these rights, please contact your institution’s
+              MirrorMind administrator or email
+              <a href="mailto:privacy@mirrormind.edu">privacy@mirrormind.edu</a
+              >. We will respond within 30 days.
+            </p>
+          </section>
+
+          <section id="data-retention" class="policy-section section-card">
+            <h2>8. Data Retention</h2>
+            <p>
+              Personal information is retained while the user is enrolled in an
+              active class or as required by the educational institution’s data
+              retention schedule. Biometric face embeddings are automatically
+              deleted within 30 days after:
+            </p>
+            <ul>
+              <li>the student’s course completion or withdrawal,</li>
+              <li>consent withdrawal by the student or guardian, or</li>
+              <li>termination of the institutional agreement.</li>
+            </ul>
+            <p>
+              Aggregated analytics (engagement statistics that do not identify
+              individuals) may be retained longer for academic research and
+              platform improvement, always in de‑identified form.
+            </p>
+          </section>
+
+          <section id="children-privacy" class="policy-section section-card">
+            <h2>9. Children’s Privacy</h2>
+            <p>
+              MirrorMind is used in schools and may process data of students
+              under the age of 13. We obtain verifiable parental or guardian
+              consent before collecting any biometric information, in accordance
+              with applicable laws (e.g., FERPA, GDPR‑K). Parents and guardians
+              have the right to review their child’s data, request deletion, and
+              withdraw consent. If you believe a child’s data has been collected
+              without proper consent, please contact us immediately.
+            </p>
+          </section>
+
+          <section id="changes-to-policy" class="policy-section section-card">
+            <h2>10. Changes to Policy</h2>
+            <p>
+              This Privacy Policy may be updated to reflect changes in the
+              platform or legal requirements. Material updates will be
+              communicated via email to institutional administrators and through
+              a notice on the login page. The "Last Updated" date at the top of
+              this document indicates the most recent revision. Continued use of
+              MirrorMind after such changes constitutes acceptance of the
+              updated policy.
+            </p>
+          </section>
+
+          <section id="contact-information" class="policy-section section-card">
+            <h2>11. Contact Information</h2>
+            <p>
+              For privacy‑related questions, data requests, or consent
+              withdrawal:
+            </p>
+            <p>
+              MirrorMind Project Team<br />
+              Attn: Privacy Team<br />
+              Khamgaon , Buldhana - 444303<br />
+              Maharashtra , India <br />
+              Email:
+              <a href="mailto:mirrormindsmart@gmail.com"
+                >mirrormindsmart@gmail.com</a
+              ><br />
+              Phone: +[91] 8668289785 (Mon–Fri, 09:00–18:00)
+            </p>
+            <p>
+              Institutional partners may also contact their designated
+              MirrorMind liaison or system administrator.
+            </p>
+          </section>
+
+          <hr />
+          <p class="small-meta">
+            MirrorMind is an academic capstone project. This privacy policy
+            reflects the platform’s educational purpose: AI‑assisted attendance,
+            emotion analytics, and secure OTP login – without commercial
+            surveillance or data selling.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT STICKY NAVIGATION PANEL (30%) -->
+      <aside class="nav-panel">
+        <div class="nav-stack" id="navStack">
+          <button class="nav-link active-tab" data-target="introduction">
+            1. Introduction
+          </button>
+          <button class="nav-link" data-target="information-we-collect">
+            2. Information we collect
+          </button>
+          <button class="nav-link" data-target="how-we-use">
+            3. How we use
+          </button>
+          <button class="nav-link" data-target="biometric-policy">
+            4. Biometric & face policy
+          </button>
+          <button class="nav-link" data-target="storage-security">
+            5. Storage & security
+          </button>
+          <button class="nav-link" data-target="data-sharing">
+            6. Data sharing
+          </button>
+          <button class="nav-link" data-target="user-rights">
+            7. User rights
+          </button>
+          <button class="nav-link" data-target="data-retention">
+            8. Data retention
+          </button>
+          <button class="nav-link" data-target="children-privacy">
+            9. Children’s privacy
+          </button>
+          <button class="nav-link" data-target="changes-to-policy">
+            10. Changes
+          </button>
+          <button class="nav-link" data-target="contact-information">
+            11. Contact
+          </button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- FOOTER (full width) -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div>© 2025 MirrorMind — Academic Smart Classroom Project</div>
+        <div class="footer-links">
+          <a href="/privacy-policy/">Privacy</a>
+          <a href="/term-condition/">Terms</a>
+          <a href="/help-contact/">Contact</a>
+        </div>
+        <div class="copyright">
+          No selling of data · Biometric data never shared · Educational use
+          only
+        </div>
+      </div>
+    </footer>
+
+    <script src="/static/js/other/privacy_policy.js"></script>
+  </body>
+</html>

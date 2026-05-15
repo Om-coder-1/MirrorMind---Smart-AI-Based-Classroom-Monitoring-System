@@ -1,0 +1,1 @@
+web: daphne MirrorMind.asgi:application
