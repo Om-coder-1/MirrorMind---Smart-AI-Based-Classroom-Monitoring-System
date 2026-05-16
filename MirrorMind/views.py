@@ -24,7 +24,7 @@ from django.conf import settings
 from django.db.models import Q
 import traceback
 
-from deepface import DeepFace
+# DeepFace and TensorFlow imports removed - will be lazy loaded inside functions
 
 from colleges.models import College, Department, Class
 from notifications.models import EmotionLog, Notification, ClassSchedule
@@ -64,11 +64,13 @@ otp_storage = {}
 
 OTP_EXPIRY_MINUTES = 5
 
+
 def face_capture(request):
     student_id = request.session.get("face_student_id")
     if not student_id:
         return redirect("student_signup")
     return render(request, "other/face_capture.html", {"student_id": student_id})
+
 
 @csrf_exempt
 def process_frame(request):
@@ -99,6 +101,9 @@ def process_frame(request):
 
         if embedding_counter[student_id] < 30:
             try:
+                # Lazy load DeepFace inside the function
+                from deepface import DeepFace
+
                 result = DeepFace.represent(
                     frame,
                     model_name="Facenet",
@@ -146,6 +151,7 @@ def process_frame(request):
 
             try:
                 from attendance.recognition import reload_embeddings
+
                 reload_embeddings()
             except Exception as re_err:
                 print("⚠️ Recognition reload error:", re_err)
@@ -157,6 +163,7 @@ def process_frame(request):
     except Exception as e:
         print("FACE ERROR:", e)
         return JsonResponse({"error": "Face processing failed"}, status=500)
+
 
 def load_embeddings():
     import pickle
@@ -180,6 +187,7 @@ def load_embeddings():
 
     return known_embeddings, known_ids
 
+
 def attendance_page(request):
 
     student_id = request.session.get("student_id")
@@ -198,6 +206,7 @@ def attendance_page(request):
 
     return render(request, "other/attendance.html", context)
 
+
 @csrf_exempt
 def mark_attendance(request):
 
@@ -209,10 +218,10 @@ def mark_attendance(request):
     if not student_session_id:
         return JsonResponse({"status": "login_required", "message": "Login required"})
 
-    image_data   = request.POST.get("image")
-    subject      = request.POST.get("subject", "Unknown").strip()
-    class_name   = request.POST.get("class", "").strip().upper()
-    schedule_id  = request.POST.get("schedule_id", "").strip()
+    image_data = request.POST.get("image")
+    subject = request.POST.get("subject", "Unknown").strip()
+    class_name = request.POST.get("class", "").strip().upper()
+    schedule_id = request.POST.get("schedule_id", "").strip()
 
     if not image_data:
         return JsonResponse({"error": "No image received"}, status=400)
@@ -226,6 +235,7 @@ def mark_attendance(request):
 
     # ── Use averaged recognition engine (higher accuracy) ──
     from attendance.recognition import recognize, reload_embeddings
+
     predicted_id = recognize(frame)
 
     if not predicted_id:
@@ -254,7 +264,7 @@ def mark_attendance(request):
     if class_name:
         subject_class = f"{subject}({class_name})"
 
-    now      = datetime.now()
+    now = datetime.now()
     date_str = now.strftime("%d-%m-%Y")
     time_str = now.strftime("%H:%M:%S")
 
@@ -262,7 +272,9 @@ def mark_attendance(request):
     os.makedirs(subject_dir, exist_ok=True)
 
     if schedule_id:
-        file_path = os.path.join(subject_dir, f"Attendance_{date_str}_S{schedule_id}.csv")
+        file_path = os.path.join(
+            subject_dir, f"Attendance_{date_str}_S{schedule_id}.csv"
+        )
     else:
         file_path = os.path.join(subject_dir, f"Attendance_{date_str}.csv")
 
@@ -274,7 +286,9 @@ def mark_attendance(request):
             for row in reader:
                 if row["Enrollment"].strip() == enrollment_no:
                     print("⚠️ Attendance already marked for this session")
-                    return JsonResponse({"status": "already_marked", "name": student_name})
+                    return JsonResponse(
+                        {"status": "already_marked", "name": student_name}
+                    )
 
     with open(file_path, "a", newline="") as csvfile:
 
@@ -299,11 +313,14 @@ def mark_attendance(request):
         }
     )
 
+
 def home(request):
     return render(request, "index.html")
 
+
 def live_class(request):
     return render(request, "other/live_room.html")
+
 
 @csrf_exempt
 def teacher_verify_otp(request):
@@ -351,6 +368,7 @@ def teacher_verify_otp(request):
     except Exception as e:
         print("Error verifying OTP:", e)
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 @csrf_protect
 def teacher_signup(request):
@@ -522,6 +540,7 @@ def teacher_signup(request):
 
     return render(request, "teacher/teacher_signup.html")
 
+
 @csrf_exempt
 def teacher_login(request):
     print("➡️ teacher_login view called")
@@ -591,6 +610,7 @@ def teacher_login(request):
             )
 
     return render(request, "teacher/teacher_login.html")
+
 
 @teacher_required
 def teacher_dashboard(request):
@@ -662,10 +682,14 @@ def teacher_dashboard(request):
 
                     if os.path.exists(parent_dir):
                         # Collect all CSV files for this date (handles _S1, _S2, ... suffixes)
-                        matching_files = sorted([
-                            f for f in os.listdir(parent_dir)
-                            if f.startswith(f"Attendance_{formatted_date}") and f.endswith(".csv")
-                        ])
+                        matching_files = sorted(
+                            [
+                                f
+                                for f in os.listdir(parent_dir)
+                                if f.startswith(f"Attendance_{formatted_date}")
+                                and f.endswith(".csv")
+                            ]
+                        )
                         print(f"Matching files: {matching_files}")
 
                         if matching_files:
@@ -673,11 +697,18 @@ def teacher_dashboard(request):
                             for fname in matching_files:
                                 fpath = os.path.join(parent_dir, fname)
                                 try:
-                                    with open(fpath, newline="", encoding="utf-8") as file:
+                                    with open(
+                                        fpath, newline="", encoding="utf-8"
+                                    ) as file:
                                         reader = csv.DictReader(file)
                                         for row in reader:
-                                            enrollment = row.get("Enrollment", "").strip()
-                                            if enrollment and enrollment not in seen_enrollments:
+                                            enrollment = row.get(
+                                                "Enrollment", ""
+                                            ).strip()
+                                            if (
+                                                enrollment
+                                                and enrollment not in seen_enrollments
+                                            ):
                                                 seen_enrollments.add(enrollment)
                                                 attendance_data.append(
                                                     {
@@ -694,7 +725,9 @@ def teacher_dashboard(request):
                             if not attendance_data:
                                 error = "No attendance records found for this date."
                             else:
-                                print(f"Successfully loaded {len(attendance_data)} records")
+                                print(
+                                    f"Successfully loaded {len(attendance_data)} records"
+                                )
                         else:
                             print(f"No files found for date {formatted_date}")
                             error = f"Attendance file not found for {subject} on {formatted_date}."
@@ -714,6 +747,7 @@ def teacher_dashboard(request):
     }
 
     return render(request, "teacher/teacher_dashboard.html", context)
+
 
 @csrf_protect
 def teacher_reset_password(request):
@@ -860,6 +894,7 @@ def teacher_reset_password(request):
     print("📄 Rendering teacher_reset_password.html")
     return render(request, "teacher/teacher_reset_password.html")
 
+
 @csrf_exempt
 def teacher_send_otp(request):
     if request.method != "POST":
@@ -899,6 +934,7 @@ def teacher_send_otp(request):
         print("Error sending teacher OTP:", e)
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def get_teacher_courses(request, teacher_id):
     session_teacher_id = request.session.get("teacher_id")
@@ -923,6 +959,7 @@ def get_teacher_courses(request, teacher_id):
         return JsonResponse({"success": True, "courses": data})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+
 
 @csrf_exempt
 def add_schedule(request):
@@ -990,6 +1027,7 @@ def add_schedule(request):
 
     return JsonResponse({"error": "Only POST allowed"})
 
+
 @csrf_exempt
 def get_teacher_schedules(request, teacher_id):
     session_teacher_id = request.session.get("teacher_id")
@@ -1024,6 +1062,7 @@ def get_teacher_schedules(request, teacher_id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
 
+
 @csrf_exempt
 def update_schedule(request, schedule_id):
     if request.method == "POST":
@@ -1034,7 +1073,9 @@ def update_schedule(request, schedule_id):
             data = json.loads(request.body)
             schedule = ClassSchedule.objects.get(id=schedule_id)
             if schedule.teacher.id != teacher_id:
-                return JsonResponse({"success": False, "error": "Forbidden"}, status=403)
+                return JsonResponse(
+                    {"success": False, "error": "Forbidden"}, status=403
+                )
 
             if schedule.status != "scheduled":
                 return JsonResponse(
@@ -1084,6 +1125,7 @@ def update_schedule(request, schedule_id):
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
 
+
 @csrf_exempt
 def delete_schedule(request, schedule_id):
     if request.method == "POST":
@@ -1093,7 +1135,9 @@ def delete_schedule(request, schedule_id):
         try:
             schedule = ClassSchedule.objects.get(id=schedule_id)
             if schedule.teacher.id != teacher_id:
-                return JsonResponse({"success": False, "error": "Forbidden"}, status=403)
+                return JsonResponse(
+                    {"success": False, "error": "Forbidden"}, status=403
+                )
 
             if schedule.status != "scheduled":
                 return JsonResponse(
@@ -1132,6 +1176,7 @@ def delete_schedule(request, schedule_id):
             return JsonResponse({"success": False, "error": "Schedule not found"})
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
+
 
 @csrf_exempt
 def update_allocation(request, allocation_id):
@@ -1187,6 +1232,7 @@ def update_allocation(request, allocation_id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def delete_allocation(request, allocation_id):
     if request.method != "POST":
@@ -1241,12 +1287,13 @@ def delete_allocation(request, allocation_id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def start_class(request, schedule_id):
     if request.method == "POST":
         teacher_id = request.session.get("teacher_id")
         if not teacher_id:
-            return JsonResponse({"success": False, "error": "Unauthorized"}, status = 401)
+            return JsonResponse({"success": False, "error": "Unauthorized"}, status=401)
         try:
             schedule = ClassSchedule.objects.get(id=schedule_id)
 
@@ -1293,6 +1340,7 @@ def start_class(request, schedule_id):
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
 
+
 def get_teacher_allocated_classes(request, teacher_id):
     session_teacher_id = request.session.get("teacher_id")
     if not session_teacher_id or int(session_teacher_id) != int(teacher_id):
@@ -1320,6 +1368,7 @@ def get_teacher_allocated_classes(request, teacher_id):
         return JsonResponse({"success": True, "classes": classes})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 def get_teacher_notifications(request, teacher_id):
     session_teacher_id = request.session.get("teacher_id")
@@ -1357,6 +1406,7 @@ def get_teacher_notifications(request, teacher_id):
         return JsonResponse({"success": True, "notifications": data})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 @csrf_exempt
 def add_course_allocation(request):
@@ -1430,6 +1480,7 @@ def add_course_allocation(request):
 
     return JsonResponse({"error": "Only POST method allowed"}, status=405)
 
+
 def get_teacher_allocations(request, teacher_id):
     session_teacher_id = request.session.get("teacher_id")
     if not session_teacher_id or int(session_teacher_id) != int(teacher_id):
@@ -1465,6 +1516,7 @@ def get_teacher_allocations(request, teacher_id):
 
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 @csrf_protect
 def student_signup(request):
@@ -1666,6 +1718,7 @@ def student_signup(request):
 
     return render(request, "student/student_signup.html")
 
+
 def student_login(request):
     if request.method == "POST":
         email = request.POST.get("email")
@@ -1703,6 +1756,7 @@ def student_login(request):
         return redirect("/student-dashboard/")
 
     return render(request, "student/student_login.html")
+
 
 @student_required
 def student_dashboard(request):
@@ -1842,6 +1896,7 @@ def student_dashboard(request):
 
     print("=" * 50)
     return render(request, "student/student_dashboard.html", context)
+
 
 @csrf_protect
 def student_reset_password(request):
@@ -1988,6 +2043,7 @@ def student_reset_password(request):
     print("📄 Rendering student_reset_password.html")
     return render(request, "student/student_reset_password.html")
 
+
 @csrf_exempt
 def check_student_exists(request):
     if request.method == "POST":
@@ -1999,6 +2055,7 @@ def check_student_exists(request):
             return JsonResponse({"exists": False})
 
     return JsonResponse({"error": "Invalid request method"}, status=400)
+
 
 @csrf_exempt
 def get_student_schedules(request, student_id):
@@ -2061,6 +2118,7 @@ def get_student_schedules(request, student_id):
         traceback.print_exc()
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def get_student_notifications(request, student_id):
     session_student_id = request.session.get("student_id")
@@ -2111,6 +2169,7 @@ def get_student_notifications(request, student_id):
         print(f"❌ Error: {str(e)}")
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def mark_notification_read(request, notification_id):
     # ── Only allow logged-in students to mark their own notifications ──
@@ -2140,6 +2199,7 @@ def mark_notification_read(request, notification_id):
 
     return JsonResponse({"error": "Only POST allowed"}, status=405)
 
+
 @csrf_exempt
 def mark_all_notifications_read(request, student_id):
     session_student_id = request.session.get("student_id")
@@ -2160,6 +2220,7 @@ def mark_all_notifications_read(request, student_id):
             return JsonResponse({"success": False, "error": str(e)}, status=500)
 
     return JsonResponse({"error": "Only POST allowed"}, status=405)
+
 
 @csrf_exempt
 def check_class_access(request, schedule_id, student_id):
@@ -2227,6 +2288,7 @@ def check_class_access(request, schedule_id, student_id):
         print(f"❌ Error: {str(e)}")
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 @csrf_exempt
 def get_student_attendance(request, student_id):
     # ── Session verify ──
@@ -2255,7 +2317,9 @@ def get_student_attendance(request, student_id):
         for allocation in allocations:
             subject = allocation.subject_name
             class_obj = allocation.class_assigned
-            full_class_name = f"{class_obj.class_name} - {class_obj.department.department_name}"
+            full_class_name = (
+                f"{class_obj.class_name} - {class_obj.department.department_name}"
+            )
             subject_class = f"{subject}({full_class_name})"
             subject_dir = os.path.join(ATTENDANCE_DIR, subject_class)
 
@@ -2264,9 +2328,9 @@ def get_student_attendance(request, student_id):
             subject_recent = []
 
             if os.path.exists(subject_dir) and enrollment_no:
-                csv_files = sorted([
-                    f for f in os.listdir(subject_dir) if f.endswith(".csv")
-                ])
+                csv_files = sorted(
+                    [f for f in os.listdir(subject_dir) if f.endswith(".csv")]
+                )
                 for fname in csv_files:
                     fpath = os.path.join(subject_dir, fname)
                     session_counted = False
@@ -2286,40 +2350,51 @@ def get_student_attendance(request, student_id):
                                         display_date = d.strftime("%d %b %Y")
                                     except Exception:
                                         display_date = raw_date
-                                    subject_recent.append({
-                                        "date": display_date,
-                                        "subject": subject,
-                                        "time": row.get("Time", ""),
-                                        "status": "Present",
-                                    })
+                                    subject_recent.append(
+                                        {
+                                            "date": display_date,
+                                            "subject": subject,
+                                            "time": row.get("Time", ""),
+                                            "status": "Present",
+                                        }
+                                    )
                     except Exception:
                         continue
 
-            percentage = round((attended / total_classes) * 100) if total_classes > 0 else 0
-            subject_stats.append({
-                "name": subject,
-                "total": total_classes,
-                "attended": attended,
-                "percentage": percentage,
-            })
+            percentage = (
+                round((attended / total_classes) * 100) if total_classes > 0 else 0
+            )
+            subject_stats.append(
+                {
+                    "name": subject,
+                    "total": total_classes,
+                    "attended": attended,
+                    "percentage": percentage,
+                }
+            )
             recent_records.extend(subject_recent)
 
         # ── Sort recent by date descending, take latest 10 ──
         recent_records.sort(key=lambda x: x["date"], reverse=True)
         recent_records = recent_records[:10]
 
-        return JsonResponse({
-            "success": True,
-            "attendance": {
-                "subjects": subject_stats,
-                "recent": recent_records,
+        return JsonResponse(
+            {
+                "success": True,
+                "attendance": {
+                    "subjects": subject_stats,
+                    "recent": recent_records,
+                },
             }
-        })
+        )
 
     except Student.DoesNotExist:
-        return JsonResponse({"success": False, "error": "Student not found"}, status=404)
+        return JsonResponse(
+            {"success": False, "error": "Student not found"}, status=404
+        )
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
 
 def check_college(request):
     code = request.GET.get("college_code")
@@ -2338,6 +2413,7 @@ def check_college(request):
     except College.DoesNotExist:
         return JsonResponse({"exists": False})
 
+
 def get_departments(request, college_id):
     departments = Department.objects.filter(college_id=college_id)
 
@@ -2348,6 +2424,7 @@ def get_departments(request, college_id):
 
     return JsonResponse({"departments": data})
 
+
 def get_classes(request, department_id):
     classes = Class.objects.filter(department_id=department_id)
 
@@ -2357,6 +2434,7 @@ def get_classes(request, department_id):
         data.append({"id": c.id, "name": c.class_name})
 
     return JsonResponse({"classes": data})
+
 
 @csrf_exempt
 def add_college(request):
@@ -2373,6 +2451,7 @@ def add_college(request):
 
         return JsonResponse({"college_id": college.id, "created": created})
 
+
 @csrf_exempt
 def add_department(request):
     if request.method == "POST":
@@ -2388,6 +2467,7 @@ def add_department(request):
 
         return JsonResponse({"department_id": department.id, "created": created})
 
+
 @csrf_exempt
 def add_class(request):
     if request.method == "POST":
@@ -2402,6 +2482,7 @@ def add_class(request):
         )
 
         return JsonResponse({"class_id": cls.id, "created": created})
+
 
 @csrf_exempt
 def send_class_notification(request):
@@ -2496,6 +2577,7 @@ def send_class_notification(request):
 
     return JsonResponse({"error": "Only POST allowed"}, status=405)
 
+
 def live_room(request):
     schedule_id = request.GET.get("schedule", "")
     role = request.GET.get("role", "student")
@@ -2552,6 +2634,7 @@ def live_room(request):
         "class_name": class_name,
     }
     return render(request, "other/live_room.html", context)
+
 
 def send_email_otp(receiver_email, otp, purpose="signup", role="student"):
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -2652,6 +2735,7 @@ If this wasn't you, please ignore this email.
         print("EMAIL OTP ERROR:", e)
         return False
 
+
 @csrf_protect
 def email_otp_handler(request):
     if request.method == "POST":
@@ -2722,13 +2806,16 @@ def email_otp_handler(request):
             attempts = request.session.get("otp_attempts", 0)
             if attempts >= 5:
                 request.session.flush()
-                return JsonResponse({"verified": False, "error": "Too many attempts. Request new OTP."}, status=429)
+                return JsonResponse(
+                    {"verified": False, "error": "Too many attempts. Request new OTP."},
+                    status=429,
+                )
 
-            session_otp     = request.session.get("otp_code")
-            session_email   = request.session.get("otp_email")
-            session_expiry  = request.session.get("otp_expiry")
+            session_otp = request.session.get("otp_code")
+            session_email = request.session.get("otp_email")
+            session_expiry = request.session.get("otp_expiry")
             session_purpose = request.session.get("otp_purpose")
-            session_role    = request.session.get("otp_role")
+            session_role = request.session.get("otp_role")
 
             if not all([session_otp, session_email, session_expiry]):
                 return JsonResponse(
@@ -2776,6 +2863,7 @@ def email_otp_handler(request):
             return JsonResponse({"verified": True})
 
     return JsonResponse({"error": "Invalid action"}, status=400)
+
 
 def create_schedule_notifications(schedule, notification_type):
     try:
@@ -2826,6 +2914,7 @@ def create_schedule_notifications(schedule, notification_type):
         print(f"Error creating notifications: {e}")
         return False
 
+
 @csrf_exempt
 def end_class(request, schedule_id):
     if request.method == "POST":
@@ -2873,6 +2962,7 @@ def end_class(request, schedule_id):
 
     return JsonResponse({"error": "Only POST allowed"}, status=405)
 
+
 @csrf_exempt
 def detect_emotion(request):
     if request.method != "POST":
@@ -2905,7 +2995,9 @@ def detect_emotion(request):
             frame = cv2.resize(frame, (320, int(h * scale)))
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60))
+        faces = face_cascade.detectMultiScale(
+            gray, scaleFactor=1.1, minNeighbors=5, minSize=(60, 60)
+        )
 
         face_img = frame
         if len(faces) > 0:
@@ -2919,58 +3011,78 @@ def detect_emotion(request):
             y2 = min(frame.shape[0], y + h_f + pad_y)
             face_img = frame[y1:y2, x1:x2]
 
-        result = DeepFace.analyze(
-            face_img,
-            actions=["emotion"],
-            enforce_detection=False,
-            detector_backend="opencv",
-            silent=True,
-        )
+        try:
+            # Lazy load DeepFace only when needed with minimal memory footprint
+            from deepface import DeepFace
 
-        if isinstance(result, list):
-            result = result[0]
+            result = DeepFace.analyze(
+                face_img,
+                actions=["emotion"],
+                enforce_detection=False,
+                detector_backend="opencv",
+                silent=True,
+            )
 
-        emotions = result.get("emotion", {})
-        dominant = result.get("dominant_emotion", "neutral")
+            if isinstance(result, list):
+                result = result[0]
 
-        EMOTION_MAP = {
-            "happy":     ("Happy",   0),
-            "surprised": ("Happy",   0),
-            "neutral":   ("Focused", 1),
-            "disgusted": ("Neutral", 1),
-            "angry":     ("Bored",   2),
-            "fearful":   ("Bored",   2),
-            "sad":       ("Sleepy",  3),
-        }
+            emotions = result.get("emotion", {})
+            dominant = result.get("dominant_emotion", "neutral")
 
-        mapped_label, _ = EMOTION_MAP.get(dominant, ("Neutral", 1))
-        raw_conf = emotions.get(dominant, 70) / 100.0
-        confidence = round(min(0.99, max(0.5, raw_conf)), 3)
+            EMOTION_MAP = {
+                "happy": ("Happy", 0),
+                "surprised": ("Happy", 0),
+                "neutral": ("Focused", 1),
+                "disgusted": ("Neutral", 1),
+                "angry": ("Bored", 2),
+                "fearful": ("Bored", 2),
+                "sad": ("Sleepy", 3),
+            }
 
-        print(f"✅ DeepFace Emotion [{student_id}]: {dominant} → {mapped_label} ({confidence:.2f})")
+            mapped_label, _ = EMOTION_MAP.get(dominant, ("Neutral", 1))
+            raw_conf = emotions.get(dominant, 70) / 100.0
+            confidence = round(min(0.99, max(0.5, raw_conf)), 3)
 
-        return JsonResponse({
-            "emotion": dominant,
-            "mapped_emotion": mapped_label,
-            "confidence": confidence,
-            "all_emotions": {k: round(v / 100, 3) for k, v in emotions.items()},
-        })
+            print(
+                f"✅ DeepFace Emotion [{student_id}]: {dominant} → {mapped_label} ({confidence:.2f})"
+            )
+
+            return JsonResponse(
+                {
+                    "emotion": dominant,
+                    "mapped_emotion": mapped_label,
+                    "confidence": confidence,
+                    "all_emotions": {k: round(v / 100, 3) for k, v in emotions.items()},
+                }
+            )
+
+        except Exception as deepface_error:
+            # Fallback if DeepFace fails or memory issues occur
+            print(f"⚠️ DeepFace emotion detection error: {deepface_error}")
+            return JsonResponse(
+                {"emotion": "neutral", "mapped_emotion": "Focused", "confidence": 0.7}
+            )
 
     except Exception as e:
         print("❌ Emotion detection error:", e)
         return JsonResponse({"emotion": "neutral", "confidence": 0.7})
 
+
 def term_condition(request):
     return render(request, "other/term_condition.html")
+
 
 def help_contact(request):
     return render(request, "other/help_contact.html")
 
+
 def about(request):
     return render(request, "other/about.html")
 
+
 def privacy_policy(request):
     return render(request, "other/privacy_policy.html")
+
 
 @csrf_exempt
 def export_attendance_excel(request):
@@ -2986,36 +3098,47 @@ def export_attendance_excel(request):
 
     try:
         formatted_date = datetime.strptime(date_input, "%Y-%m-%d").strftime("%d-%m-%Y")
-        allocation = CourseAllocation.objects.filter(
-            teacher_id=teacher_id, subject_name=subject
-        ).select_related("class_assigned", "class_assigned__department").first()
+        allocation = (
+            CourseAllocation.objects.filter(teacher_id=teacher_id, subject_name=subject)
+            .select_related("class_assigned", "class_assigned__department")
+            .first()
+        )
 
         if not allocation:
             return JsonResponse({"error": "Subject not found"}, status=404)
 
         class_obj = allocation.class_assigned
-        full_class_name = f"{class_obj.class_name} - {class_obj.department.department_name}"
+        full_class_name = (
+            f"{class_obj.class_name} - {class_obj.department.department_name}"
+        )
         subject_class = f"{subject}({full_class_name})"
-        subject_dir   = os.path.join(ATTENDANCE_DIR, subject_class)
+        subject_dir = os.path.join(ATTENDANCE_DIR, subject_class)
 
         # ── Collect all CSV files for this date (handles _S1, _S2 suffixes) ──
         if not os.path.exists(subject_dir):
             return JsonResponse({"error": "Attendance records not found"}, status=404)
 
-        matching_files = sorted([
-            f for f in os.listdir(subject_dir)
-            if f.startswith(f"Attendance_{formatted_date}") and f.endswith(".csv")
-        ])
+        matching_files = sorted(
+            [
+                f
+                for f in os.listdir(subject_dir)
+                if f.startswith(f"Attendance_{formatted_date}") and f.endswith(".csv")
+            ]
+        )
 
         if not matching_files:
-            return JsonResponse({"error": "Attendance file not found for this date"}, status=404)
+            return JsonResponse(
+                {"error": "Attendance file not found for this date"}, status=404
+            )
 
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Attendance"
 
         header_font = Font(bold=True, color="FFFFFF")
-        header_fill = PatternFill(start_color="667eea", end_color="667eea", fill_type="solid")
+        header_fill = PatternFill(
+            start_color="667eea", end_color="667eea", fill_type="solid"
+        )
 
         ws.append(["MirrorMind - Attendance Report"])
         ws.append(["Subject:", subject])
@@ -3023,7 +3146,14 @@ def export_attendance_excel(request):
         ws.append(["Date:", date_input])
         ws.append([])
 
-        headers = ["#", "Subject(Class)", "Enrollment No", "Student Name", "Date", "Time"]
+        headers = [
+            "#",
+            "Subject(Class)",
+            "Enrollment No",
+            "Student Name",
+            "Date",
+            "Time",
+        ]
         ws.append(headers)
         for i, cell in enumerate(ws[6]):
             cell.font = header_font
@@ -3041,14 +3171,16 @@ def export_attendance_excel(request):
                     enrollment = row.get("Enrollment", "").strip()
                     if enrollment and enrollment not in seen_enrollments:
                         seen_enrollments.add(enrollment)
-                        ws.append([
-                            row_idx,
-                            row.get("Subject(Class)", ""),
-                            enrollment,
-                            row.get("Name", ""),
-                            row.get("Date", ""),
-                            row.get("Time", ""),
-                        ])
+                        ws.append(
+                            [
+                                row_idx,
+                                row.get("Subject(Class)", ""),
+                                enrollment,
+                                row.get("Name", ""),
+                                row.get("Date", ""),
+                                row.get("Time", ""),
+                            ]
+                        )
                         row_idx += 1
 
         ws.append([])
@@ -3061,7 +3193,9 @@ def export_attendance_excel(request):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = f'attachment; filename="Attendance_{subject}_{date_input}.xlsx"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="Attendance_{subject}_{date_input}.xlsx"'
+        )
         wb.save(response)
         return response
 
@@ -3069,35 +3203,42 @@ def export_attendance_excel(request):
         print("EXCEL EXPORT ERROR:", e)
         return JsonResponse({"error": str(e)}, status=500)
 
+
 @csrf_exempt
 def analytics_data(request):
     teacher_id = request.session.get("teacher_id")
     if not teacher_id:
         return JsonResponse({"SUCCESS": False, "ERROR": "Unauthorized"}, status=401)
 
-    subject    = request.GET.get("subject", "")
+    subject = request.GET.get("subject", "")
 
     if not teacher_id or not subject:
         return JsonResponse({"success": False, "error": "Missing params"}, status=400)
 
     try:
-        allocation = CourseAllocation.objects.filter(
-            teacher_id=teacher_id, subject_name=subject
-        ).select_related("class_assigned", "class_assigned__department").first()
+        allocation = (
+            CourseAllocation.objects.filter(teacher_id=teacher_id, subject_name=subject)
+            .select_related("class_assigned", "class_assigned__department")
+            .first()
+        )
 
         if not allocation:
             return JsonResponse({"success": False, "error": "Allocation not found"})
 
         class_obj = allocation.class_assigned
-        full_class_name = f"{class_obj.class_name} - {class_obj.department.department_name}"
-        subject_class   = f"{subject}({full_class_name})"
-        subject_dir     = os.path.join(ATTENDANCE_DIR, subject_class)
+        full_class_name = (
+            f"{class_obj.class_name} - {class_obj.department.department_name}"
+        )
+        subject_class = f"{subject}({full_class_name})"
+        subject_dir = os.path.join(ATTENDANCE_DIR, subject_class)
 
         trend_labels, trend_data = [], []
         total_present_all, class_count = 0, 0
 
         if os.path.exists(subject_dir):
-            files = sorted([f for f in os.listdir(subject_dir) if f.endswith(".csv")])[-10:]
+            files = sorted([f for f in os.listdir(subject_dir) if f.endswith(".csv")])[
+                -10:
+            ]
             for fname in files:
                 fpath = os.path.join(subject_dir, fname)
                 with open(fpath, newline="", encoding="utf-8") as f:
@@ -3107,7 +3248,8 @@ def analytics_data(request):
                     date_str = fname.replace("Attendance_", "").replace(".csv", "")
                     # Strip session suffix like _S1, _S2 if present
                     import re as _re
-                    date_str = _re.sub(r'_S[0-9]+$', '', date_str)
+
+                    date_str = _re.sub(r"_S[0-9]+$", "", date_str)
                     d = datetime.strptime(date_str, "%d-%m-%Y")
                     trend_labels.append(d.strftime("%d %b"))
                 except Exception:
@@ -3121,14 +3263,30 @@ def analytics_data(request):
 
         schedules_qs = ClassSchedule.objects.filter(
             course_allocation=allocation
-        ).values_list('id', flat=True)
+        ).values_list("id", flat=True)
 
         emotion_logs = EmotionLog.objects.filter(schedule_id__in=schedules_qs)
         emotion_counter = Counter(log.emotion for log in emotion_logs)
 
-        emotion_labels = ['Happy', 'Focused', 'Neutral', 'Bored', 'Sad', 'Sleepy', 'Unavailable']
-        emotion_data   = [emotion_counter.get(e, 0) for e in emotion_labels]
-        emotion_colors = ['#28a745', '#007bff', '#ffc107', '#fd7e14', '#6496ff', '#dc3545', '#adb5bd']
+        emotion_labels = [
+            "Happy",
+            "Focused",
+            "Neutral",
+            "Bored",
+            "Sad",
+            "Sleepy",
+            "Unavailable",
+        ]
+        emotion_data = [emotion_counter.get(e, 0) for e in emotion_labels]
+        emotion_colors = [
+            "#28a745",
+            "#007bff",
+            "#ffc107",
+            "#fd7e14",
+            "#6496ff",
+            "#dc3545",
+            "#adb5bd",
+        ]
 
         students_in_class = Student.objects.filter(student_class=class_obj)
         per_student = []
@@ -3136,49 +3294,61 @@ def analytics_data(request):
             stu_logs = emotion_logs.filter(student=stu)
             total = stu_logs.count()
             if total == 0:
-                per_student.append({
-                    "name": f"{stu.first_name} {stu.last_name}",
-                    "enrollment": stu.enrollment_no,
-                    "dominant": "No Data",
-                    "engagement_pct": 0,
-                    "emotions": {}
-                })
+                per_student.append(
+                    {
+                        "name": f"{stu.first_name} {stu.last_name}",
+                        "enrollment": stu.enrollment_no,
+                        "dominant": "No Data",
+                        "engagement_pct": 0,
+                        "emotions": {},
+                    }
+                )
                 continue
 
             stu_counter = Counter(l.emotion for l in stu_logs)
-            dominant    = stu_counter.most_common(1)[0][0]
-            engaged     = stu_counter.get('Happy', 0) + stu_counter.get('Focused', 0)
-            eng_pct     = round((engaged / total) * 100)
+            dominant = stu_counter.most_common(1)[0][0]
+            engaged = stu_counter.get("Happy", 0) + stu_counter.get("Focused", 0)
+            eng_pct = round((engaged / total) * 100)
 
-            per_student.append({
-                "name": f"{stu.first_name} {stu.last_name}",
-                "enrollment": stu.enrollment_no,
-                "dominant": dominant,
-                "engagement_pct": eng_pct,
-                "emotions": {k: round((v / total) * 100) for k, v in stu_counter.items()}
-            })
+            per_student.append(
+                {
+                    "name": f"{stu.first_name} {stu.last_name}",
+                    "enrollment": stu.enrollment_no,
+                    "dominant": dominant,
+                    "engagement_pct": eng_pct,
+                    "emotions": {
+                        k: round((v / total) * 100) for k, v in stu_counter.items()
+                    },
+                }
+            )
 
-        per_student.sort(key=lambda x: x['engagement_pct'])
+        per_student.sort(key=lambda x: x["engagement_pct"])
 
-        return JsonResponse({
-            "success":         True,
-            "avg_present":     avg_present,
-            "total_classes":   total_students if total_students else 30,
-            "trend_labels":    trend_labels,
-            "trend_data":      trend_data,
-            "class_count":     class_count,
-            "emotion_labels":  emotion_labels,
-            "emotion_data":    emotion_data,
-            "emotion_colors":  emotion_colors,
-            "per_student":     per_student,
-        })
+        return JsonResponse(
+            {
+                "success": True,
+                "avg_present": avg_present,
+                "total_classes": total_students if total_students else 30,
+                "trend_labels": trend_labels,
+                "trend_data": trend_data,
+                "class_count": class_count,
+                "emotion_labels": emotion_labels,
+                "emotion_data": emotion_data,
+                "emotion_colors": emotion_colors,
+                "per_student": per_student,
+            }
+        )
 
     except Exception as e:
-        import traceback; traceback.print_exc()
+        import traceback
+
+        traceback.print_exc()
         print("ANALYTICS ERROR:", e)
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
+
 conversation_history = {}
+
 
 @csrf_exempt
 def study_chatbot(request):
@@ -3196,10 +3366,9 @@ def study_chatbot(request):
         API_KEYS = getattr(settings, "GENAI_API_KEYS", [])
 
         if not API_KEYS:
-            return JsonResponse({
-                "success": False, 
-                "response": "No API keys configured"
-            })
+            return JsonResponse(
+                {"success": False, "response": "No API keys configured"}
+            )
 
         if session_id not in conversation_history:
             conversation_history[session_id] = []
@@ -3238,38 +3407,33 @@ Answer:
         for i, key in enumerate(API_KEYS):
             try:
                 print(f"🔄 Trying key {i+1}/{len(API_KEYS)}")
-                
+
                 client = genai.Client(api_key=key)
-                
+
                 response = client.models.generate_content(
-                    model=MODEL_NAME,
-                    contents=prompt
+                    model=MODEL_NAME, contents=prompt
                 )
-                
+
                 if response and response.text:
                     answer = response.text.strip()
                     conversation_history[session_id].append(f"AI: {answer[:100]}...")
                     print(f"✅ Success with key {i+1}")
-                    
-                    return JsonResponse({
-                        "success": True, 
-                        "response": answer
-                    })
+
+                    return JsonResponse({"success": True, "response": answer})
 
             except Exception as e:
                 error_msg = str(e)
                 print(f"❌ Key {i+1} failed: {error_msg[:100]}")
                 continue
 
-        return JsonResponse({
-            "success": False,
-            "response": "All API keys failed. Please try: gemini-2.5-flash, gemini-2.0-flash, or gemini-2.0-flash-lite"
-        })
+        return JsonResponse(
+            {
+                "success": False,
+                "response": "All API keys failed. Please try: gemini-2.5-flash, gemini-2.0-flash, or gemini-2.0-flash-lite",
+            }
+        )
 
     except Exception as e:
         print("❌ ERROR:", str(e))
         print(traceback.format_exc())
-        return JsonResponse({
-            "success": False, 
-            "response": f"Server error occurred"
-        })
+        return JsonResponse({"success": False, "response": f"Server error occurred"})
