@@ -2,7 +2,16 @@ import cv2
 import pickle
 import os
 import numpy as np
-from deepface import DeepFace
+
+# Lazy load DeepFace to prevent memory issues on Render
+DeepFace = None
+
+def get_deepface():
+    global DeepFace
+    if DeepFace is None:
+        from deepface import DeepFace as DF
+        DeepFace = DF
+    return DeepFace
 
 # =========================
 # CONFIG
@@ -69,9 +78,11 @@ while count < max_samples:
         face = frame[y : y + h, x : x + w]
 
         try:
-            # Get embedding
-            result = DeepFace.represent(
-                face, model_name="Facenet", enforce_detection=False
+            # Get embedding using lazy-loaded DeepFace
+            result = get_deepface().represent(
+                face, 
+                model_name="Facenet", 
+                enforce_detection=False
             )
 
             embedding = result[0]["embedding"]

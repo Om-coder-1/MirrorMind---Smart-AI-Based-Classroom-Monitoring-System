@@ -10,8 +10,17 @@ import os
 import pickle
 import numpy as np
 import cv2
-from deepface import DeepFace
 from django.conf import settings
+
+# Lazy load DeepFace to prevent Render memory crash
+DeepFace = None
+
+def get_deepface():
+    global DeepFace
+    if DeepFace is None:
+        from deepface import DeepFace as DF
+        DeepFace = DF
+    return DeepFace
 
 # ─────────────────────────────────────────────
 # PATH CONFIG
@@ -134,7 +143,7 @@ def recognize(frame, threshold=THRESHOLD_NORMAL):
         return None
 
     try:
-        result = DeepFace.represent(
+        result = get_deepface().represent(
             frame,
             model_name="Facenet",
             detector_backend="opencv",
